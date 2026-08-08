@@ -1,0 +1,219 @@
+/* --- VARIABLES DE COLOR  --- */
+:root {
+    --verde-sirena: #006241;   /* Color principal - Frío */
+    --verde-menta: #d4e9e2;    /* Color secundario - Frío */
+    --cafe-oscuro: #1e1e1e;    /* Fondo premium - Neutro/Oscuro */
+    --blanco: #ffffff;
+    --crema: #f9f9f9;          /* Color cálido para contraste */
+}
+
+/* --- ESTILOS GENERALES --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: var(--crema); /* Aclaramos un poco el fondo base para que parezca app moderna */
+    color: var(--cafe-oscuro);
+}
+
+h1, h2, h3 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* --- BARRA DE NAVEGACIÓN  --- */
+.navbar {
+    background-color: var(--verde-sirena); /* ¡El verde oficial de Starbucks! */
+    position: sticky; 
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Sombra un poco más oscura */
+}
+
+.logo {
+    height: 50px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+/* Enlaces del menú en color blanco */
+.nav-links a {
+    color: var(--blanco); 
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+/* Al pasar el mouse, se pintan de verde menta (clarito) */
+.nav-links a:hover {
+    color: var(--verde-menta);
+}
+
+.logo {
+    height: 50px;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    color: var(--cafe-oscuro);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--verde-sirena);
+}
+
+/* BOTONES */
+.btn-primary {
+    background-color: var(--verde-sirena);
+    color: var(--blanco);
+    padding: 10px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--verde-menta);
+    color: var(--verde-sirena);
+}
+
+.btn-secondary {
+    display: inline-block;
+    background-color: transparent;
+    color: var(--blanco);
+    padding: 15px 30px;
+    border: 2px solid var(--blanco);
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: var(--blanco);
+    color: var(--cafe-oscuro);
+}
+
+/* --- SECCIÓN PRINCIPAL  --- */
+.hero {
+    height: 85vh; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('hero-cafe.jpg');
+    background-size: cover; 
+    background-position: center top; 
+    display: flex;
+    align-items: center;
+    padding: 0 10%;
+    /* Se eliminó el margin-top problemático */
+}
+
+.hero-content h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: var(--verde-menta);
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 500px;
+    line-height: 1.6;
+    color: var(--blanco);
+}
+
+/* --- SECCIÓN PROMOCIONES / CATÁLOGO --- */
+.promociones, .bestsellers {
+    padding: 80px 10%;
+    background-color: var(--crema);
+    color: var(--cafe-oscuro);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--verde-sirena);
+    margin-bottom: 50px;
+}
+
+.cards-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.card {
+    background-color: var(--blanco);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    width: 30%;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-10px); 
+}
+
+.card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.card-info h3 {
+    color: var(--verde-sirena);
+    margin-bottom: 10px;
+}
+
+/* --- PIE DE PÁGINA --- */
+footer {
+    text-align: center;
+    padding: 30px;
+    background-color: var(--verde-sirena);
+    color: var(--verde-menta);
+}
+
+/* --- ESTILOS PARA TIENDAS Y BOTÓN DE MAPS --- */
+.tiendas {
+    background-color: var(--cafe-oscuro);
+    padding: 80px 10%;
+}
+.tiendas .section-title {
+    color: var(--verde-menta);
+}
+.btn-maps {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #f9f9f9;
+    color: #1e1e1e;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+.btn-maps:hover {
+    background-color: var(--verde-sirena);
+    color: white;
+}
