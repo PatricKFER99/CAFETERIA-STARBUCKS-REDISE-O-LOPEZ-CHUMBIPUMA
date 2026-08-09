@@ -47,12 +47,52 @@ function renderizarTarjetas(productos, contenedor) {
         return;
     }
     
+    // Contadores para asignar de forma secuencial 1, 2, 3, 4, 5 según tu base de datos
+    let contadorCafe = 1;
+    let contadorPostre = 1;
+    let contadorJugo = 1;
+
     productos.forEach(prod => {
-        let imgUrl = 'fav-1.jpg'; 
-        if(prod.nombre.toLowerCase().includes('latte') || prod.nombre.toLowerCase().includes('jugo')) imgUrl = 'fav-3.jpg';
-        else if(prod.nombre.toLowerCase().includes('mocha') || prod.nombre.toLowerCase().includes('descafeinado')) imgUrl = 'fav-2.jpg';
+        let imgUrl = 'fav-1.jpg';
+        const cat = prod.id_catalogo; // 1 = Café, 2 = Postre, 3 = Jugo
+
+        // Mapeo inteligente basado en tus archivos reales de la carpeta
+        if (cat === 1) {
+            // Cafés: americano-alto-cafe1.jpg hasta cafe5
+            const mappingCafe = {
+                1: 'americano-alto-cafe1.jpg',
+                2: 'latte-alto-cafe2.jpg',
+                3: 'latte-macchiato-alto-cafe3.jpg',
+                4: 'black-white-mocha-alto-cafe4.jpg',
+                5: 'caramel-macchiato-alto-cafe5.jpg'
+            };
+            imgUrl = mappingCafe[contadorCafe] || 'americano-alto-cafe1.jpg';
+            contadorCafe++;
+        } else if (cat === 2) {
+            // Postres: galleta-rellena...postre1.jpg hasta postre5
+            const mappingPostre = {
+                1: 'galleta-rellena-de-crema-de-avellanas-postre1.jpg',
+                2: 'torta-de-chocolate-postre2.jpg',
+                3: 'sandwich-pavita-queso-espinaca-postre3.jpg',
+                4: 'cuchareable-chocolucuma-con-brownie-postre4.jpg',
+                5: 'cuchareable-de-tres-leches-postre5.jpg'
+            };
+            imgUrl = mappingPostre[contadorPostre] || 'torta-de-chocolate-postre2.jpg';
+            contadorPostre++;
+        } else if (cat === 3) {
+            // Jugos/Bebidas frías: iced-protein-matcha-jugo1.jpg hasta jugo5
+            const mappingJugo = {
+                1: 'iced-protein-matcha-jugo1.jpg',
+                2: 'iced-sugar-free-vanilla-protein-latte-jugo2.jpg',
+                3: 'sugar-free-vanilla-protein-latte-jugo3.jpg',
+                4: 'pink-drink-refresher-alto-jugo4.jpg',
+                5: 'protein-matcha-jugo5.jpg'
+            };
+            imgUrl = mappingJugo[contadorJugo] || 'pink-drink-refresher-alto-jugo4.jpg';
+            contadorJugo++;
+        }
         
-        const idDelCafe = prod.id_producto || prod.id;
+        const idDelProducto = prod.id_producto || prod.id;
 
         const tarjetaHTML = `
             <div class="card" style="width: 30%; min-width: 250px; background-color: var(--blanco); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; margin-bottom: 20px; display: flex; flex-direction: column;">
@@ -61,7 +101,7 @@ function renderizarTarjetas(productos, contenedor) {
                     <h3 style="color: var(--verde-sirena); margin-bottom: 10px;">${prod.nombre}</h3>
                     <p style="color: #555; margin-bottom: 15px; font-size: 0.9rem; flex-grow: 1;">${prod.descripcion}</p>
                     <span style="display: block; font-weight: bold; font-size: 1.3rem; color: var(--cafe-oscuro); margin-bottom: 15px;">S/ ${prod.precio.toFixed(2)}</span>
-                    <button onclick="agregarAlCarrito('${idDelCafe}', '${prod.nombre}', ${prod.precio})" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s;">Agregar al pedido</button>
+                    <button onclick="agregarAlCarrito('${idDelProducto}', '${prod.nombre}', ${prod.precio})" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s; background: var(--verde-sirena); color: white; font-weight: bold;">Agregar al pedido</button>
                 </div>
             </div>
         `;
@@ -174,7 +214,6 @@ window.renderizarCarrito = function() {
     const contenedor = document.getElementById('items-carrito');
     const totalElemento = document.getElementById('total-carrito');
     
-    // Seguro multipágina por si la vista actual no tiene el modal de carrito
     if (!contenedor || !totalElemento) return;
 
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
@@ -187,7 +226,7 @@ window.renderizarCarrito = function() {
         carrito.forEach((item, index) => {
             total += item.precio * item.cantidad;
             contenedor.innerHTML += `
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
                     <div><h4 style="color: var(--verde-sirena); margin: 0 0 5px 0; font-size: 1.1rem;">${item.nombre}</h4><span style="color: #777; font-size: 0.9rem;">S/ ${item.precio.toFixed(2)} x ${item.cantidad}</span></div>
                     <div style="display: flex; align-items: center; gap: 15px;"><span style="font-weight: bold; font-size: 1.1rem;">S/ ${(item.precio * item.cantidad).toFixed(2)}</span><button onclick="eliminarDelCarrito(${index})" style="background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-weight: bold;">X</button></div>
                 </div>
@@ -235,11 +274,9 @@ window.procesarCompra = async function() {
         return;
     }
 
-    // Abrimos el modal de pago
     const modalPago = document.getElementById('modal-pago');
     if(modalPago) modalPago.style.display = 'flex';
 
-    // Cargamos los distritos en el selector si está vacío
     const selectDistrito = document.getElementById('select-distrito');
     if (selectDistrito && selectDistrito.options.length <= 1) {
         try {
@@ -262,7 +299,7 @@ window.procesarCompra = async function() {
 }
 
 // ==========================================
-// FUNCIÓN 7: FINALIZAR PEDIDO (CON DISTRITO, DIRECCIÓN Y TIEMPO)
+// FUNCIÓN 7: FINALIZAR PEDIDO
 // ==========================================
 window.finalizarPedido = async function(metodoPago) {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
@@ -300,14 +337,13 @@ window.finalizarPedido = async function(metodoPago) {
             textoComprobante = "FACTURA ELECTRÓNICA";
         }
 
-        // --- LÓGICA DE TIEMPO (Detecta la fecha actual automáticamente) ---
         const fechaHoy = new Date();
-        const idAnoCalculado = fechaHoy.getFullYear() - 2023; // 2024=1, 2025=2, 2026=3...
-        const idMesCalculado = fechaHoy.getMonth() + 1; // 1 a 12 (Enero a Diciembre)
-        let idDiaCalculado = fechaHoy.getDay(); // 1 a 6 (Lunes a Sábado), 0 es Domingo
-        if (idDiaCalculado === 0) idDiaCalculado = 7; // Convertimos el 0 del Domingo al ID 7
+        const idAnoCalculado = fechaHoy.getFullYear() - 2023; 
+        const idMesCalculado = fechaHoy.getMonth() + 1; 
+        let idDiaCalculado = fechaHoy.getDay(); 
+        if (idDiaCalculado === 0) idDiaCalculado = 7; 
 
-        // --- 1. INSERTAR CABECERA ---
+        // Inserción en t_ventas
         const { data: ventaNueva, error: errorVenta } = await supabase
             .from('t_ventas')
             .insert([{ 
@@ -328,7 +364,6 @@ window.finalizarPedido = async function(metodoPago) {
         if (errorVenta) throw errorVenta;
         const idVentaGenerada = ventaNueva[0].id_venta;
 
-        // --- 2. INSERTAR DETALLES ---
         const detallesVenta = carrito.map(item => ({
             id_venta: idVentaGenerada,
             id_producto: item.id_producto,
@@ -345,7 +380,9 @@ window.finalizarPedido = async function(metodoPago) {
 
         alert(`¡Pedido registrado con éxito!\n\nTu ${textoComprobante} ha sido generada. Enviaremos tu pedido a tu distrito seleccionado.`);
         
-        document.getElementById('modal-pago').style.display = 'none';
+        const modalPago = document.getElementById('modal-pago');
+        if(modalPago) modalPago.style.display = 'none';
+        
         localStorage.removeItem('carritoStarbucks');
         renderizarCarrito();
         cerrarCarrito();
@@ -368,4 +405,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formLogin = document.getElementById('form-login');
     if(formLogin) formLogin.addEventListener('submit', iniciarSesion);
-}); 
+});
