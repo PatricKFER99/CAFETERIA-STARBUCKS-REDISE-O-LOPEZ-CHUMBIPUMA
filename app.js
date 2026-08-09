@@ -1,9 +1,7 @@
 // ==========================================
-// 1. INICIALIZAR SUPABASE 
+// 1. IMPORTAR LA CONEXIÓN A SUPABASE
 // ==========================================
-const supabaseUrl = 'https://jztcmtekhdutgwdufhci.supabase.co';
-const supabaseKey = 'sb_publishable_2G1HCWh4Hn0FXB0kA1aXog_s6R3ATtS'; 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+import { supabase } from './conexion.js';
 
 // ==========================================
 // FUNCIÓN 1: CARGAR EL CATÁLOGO DINÁMICAMENTE
