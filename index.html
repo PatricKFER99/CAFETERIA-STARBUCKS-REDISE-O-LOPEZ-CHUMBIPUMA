@@ -110,6 +110,33 @@
             </form>
         </div>
     </div>
+    <!-- ==========================================
+         PANEL LATERAL DEL CARRITO (ESTILO APP MODERNA)
+         ========================================== -->
+    <div id="overlay-carrito" onclick="cerrarCarrito()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1999; backdrop-filter: blur(2px);"></div>
+    
+    <div id="panel-carrito" style="display: none; position: fixed; top: 0; right: -400px; width: 100%; max-width: 400px; height: 100vh; background: var(--blanco); box-shadow: -5px 0 25px rgba(0,0,0,0.2); z-index: 2000; flex-direction: column; transition: right 0.3s ease;">
+        
+        <!-- Cabecera del Carrito -->
+        <div style="padding: 20px; background: var(--verde-sirena); color: white; display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0; font-size: 1.5rem;">Mi Pedido 🛒</h2>
+            <button onclick="cerrarCarrito()" style="background: none; border: none; color: white; font-size: 2rem; cursor: pointer; line-height: 1;">&times;</button>
+        </div>
+        
+        <!-- Lista de Productos -->
+        <div id="items-carrito" style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
+            <!-- Aquí JavaScript dibujará los cafés que vayas agregando -->
+        </div>
+        
+        <!-- Pie del Carrito y Botón de Pago -->
+        <div style="padding: 20px; border-top: 1px solid #ddd; background: #f9f9f9;">
+            <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: var(--cafe-oscuro);">
+                <span>Total:</span>
+                <span id="total-carrito">S/ 0.00</span>
+            </div>
+            <button onclick="procesarCompra()" style="width: 100%; background: var(--verde-menta); color: var(--verde-sirena); padding: 15px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">Confirmar Compra</button>
+        </div>
+    </div>
 
     <!-- CONEXIÓN A SUPABASE Y LÓGICA DEL SISTEMA -->
     <script type="module" src="app.js"></script>

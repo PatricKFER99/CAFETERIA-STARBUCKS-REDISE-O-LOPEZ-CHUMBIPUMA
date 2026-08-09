@@ -100,22 +100,24 @@ async function registrarCliente(event) {
 }
 
 // ==========================================
-// FUNCIÓN 3: ACTUALIZAR EL HEADER (BIENVENIDA)
+// FUNCIÓN 3: ACTUALIZAR EL HEADER (BIENVENIDA + CARRITO)
 // ==========================================
 function actualizarHeader() {
     const contenedorUsuario = document.getElementById('menu-usuario');
     const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioStarbucks'));
 
     if (usuarioGuardado && contenedorUsuario) {
-        // Extraemos el primer nombre
         const primerNombre = usuarioGuardado.nombre.split(' ')[0];
         
-        // Reemplazamos los botones por el saludo y el botón de salir
+        // Agregamos el botón del carrito al menú superior
         contenedorUsuario.innerHTML = `
             <span style="color: var(--blanco); font-weight: bold; margin-right: 15px; font-size: 1.1rem;">
                 Bienvenido, ${primerNombre}
             </span>
-            <button onclick="cerrarSesion()" style="background: transparent; border: 1px solid var(--blanco); color: var(--blanco); padding: 8px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: background 0.3s;">
+            <button onclick="abrirCarrito()" style="background: var(--verde-menta); color: var(--verde-sirena); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-right: 10px;">
+                🛒 Carrito
+            </button>
+            <button onclick="cerrarSesion()" style="background: transparent; border: 1px solid var(--blanco); color: var(--blanco); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold;">
                 Salir
             </button>
         `;
@@ -126,8 +128,9 @@ function actualizarHeader() {
 // FUNCIÓN 4: CERRAR SESIÓN
 // ==========================================
 window.cerrarSesion = function() {
-    localStorage.removeItem('usuarioStarbucks'); // Borramos la memoria
-    location.reload(); // Recargamos la página
+    localStorage.removeItem('usuarioStarbucks'); 
+    localStorage.removeItem('carritoStarbucks'); // Vaciamos el carrito al salir
+    location.reload(); 
 }
 
 // ==========================================
@@ -135,40 +138,34 @@ window.cerrarSesion = function() {
 // ==========================================
 async function iniciarSesion(event) {
     event.preventDefault();
-    
     const correo = document.getElementById('login-correo').value;
     const contrasena = document.getElementById('login-password').value;
     
     try {
-        // Buscamos en la BD si existe el cliente con ese correo y contraseña
         const { data: cliente, error } = await supabase
             .from('t_cliente')
             .select('*')
             .eq('correo', correo)
             .eq('contrasena', contrasena)
-            .single(); // Trae un solo registro exacto
+            .single(); 
             
         if (error) throw error;
         
         if (cliente) {
-            // Guardamos la sesión en el navegador
             localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
                 nombre: cliente.nombre_completo, 
                 ruc: cliente.ruc,
                 correo: cliente.correo
             }));
             
-            actualizarHeader(); // Actualizamos la vista
+            actualizarHeader(); 
             
-            // Extraemos solo el primer nombre para saludar
             const primerNombre = cliente.nombre_completo.split(' ')[0];
             alert(`¡Qué bueno verte de nuevo, ${primerNombre}!`);
             
-            // Cerramos y limpiamos el modal
             document.getElementById('modal-login').style.display = 'none';
             document.getElementById('form-login').reset();
         }
-        
     } catch (error) {
         console.error("Error al iniciar sesión:", error);
         alert('Correo o contraseña incorrectos. Por favor, intenta de nuevo.');
@@ -176,22 +173,134 @@ async function iniciarSesion(event) {
 }
 
 // ==========================================
-// FUNCIÓN 6: AGREGAR AL CARRITO (CANDADO DE SEGURIDAD)
+// FUNCIÓN 6: SISTEMA DEL CARRITO (NUEVO)
 // ==========================================
+
+// 6.1 Agregar un producto a la memoria
 window.agregarAlCarrito = function(nombreProducto, precio) {
-    // 1. Verificamos si hay un usuario en la memoria
     const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioStarbucks'));
 
-    // 2. Si NO hay usuario, bloqueamos y pedimos login
     if (!usuarioGuardado) {
-        alert(`¡Hola! Para agregar un ${nombreProducto} a tu pedido, por favor inicia sesión o regístrate primero.`);
+        alert(`¡Hola! Para pedir un ${nombreProducto}, por favor inicia sesión o regístrate primero.`);
         document.getElementById('modal-login').style.display = 'flex';
         return; 
     }
 
-    // 3. Si SÍ hay usuario, le permitimos avanzar
-    const primerNombre = usuarioGuardado.nombre.split(' ')[0];
-    alert(`¡Excelente elección, ${primerNombre}! Se agregó ${nombreProducto} (S/ ${precio.toFixed(2)}) a tu cuenta.`);
+    let carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
+    
+    // Verificamos si ya existe para sumar cantidad
+    const indice = carrito.findIndex(item => item.nombre === nombreProducto);
+    if(indice !== -1) {
+        carrito[indice].cantidad += 1;
+    } else {
+        carrito.push({ nombre: nombreProducto, precio: precio, cantidad: 1 });
+    }
+
+    localStorage.setItem('carritoStarbucks', JSON.stringify(carrito));
+    renderizarCarrito(); // Actualizamos la vista
+    abrirCarrito(); // Desplegamos el menú lateral automáticamente
+}
+
+// 6.2 Dibujar los productos en el panel lateral
+window.renderizarCarrito = function() {
+    const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
+    const contenedor = document.getElementById('items-carrito');
+    const totalElemento = document.getElementById('total-carrito');
+    
+    contenedor.innerHTML = '';
+    let total = 0;
+
+    if (carrito.length === 0) {
+        contenedor.innerHTML = '<p style="text-align: center; color: #777; margin-top: 20px;">Tu carrito está vacío.</p>';
+    } else {
+        carrito.forEach((item, index) => {
+            total += item.precio * item.cantidad;
+            contenedor.innerHTML += `
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    <div>
+                        <h4 style="color: var(--verde-sirena); margin: 0 0 5px 0; font-size: 1.1rem;">${item.nombre}</h4>
+                        <span style="color: #777; font-size: 0.9rem;">S/ ${item.precio.toFixed(2)} x ${item.cantidad}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span style="font-weight: bold; font-size: 1.1rem;">S/ ${(item.precio * item.cantidad).toFixed(2)}</span>
+                        <button onclick="eliminarDelCarrito(${index})" style="background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-weight: bold;">X</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    totalElemento.innerText = `S/ ${total.toFixed(2)}`;
+}
+
+// 6.3 Eliminar un producto
+window.eliminarDelCarrito = function(index) {
+    let carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
+    carrito.splice(index, 1);
+    localStorage.setItem('carritoStarbucks', JSON.stringify(carrito));
+    renderizarCarrito();
+}
+
+// 6.4 Efectos visuales de abrir y cerrar
+window.abrirCarrito = function() {
+    document.getElementById('panel-carrito').style.display = 'flex';
+    document.getElementById('overlay-carrito').style.display = 'block';
+    renderizarCarrito();
+    // Truco para que la animación fluya
+    setTimeout(() => {
+        document.getElementById('panel-carrito').style.right = '0';
+    }, 10);
+}
+
+window.cerrarCarrito = function() {
+    document.getElementById('panel-carrito').style.right = '-400px';
+    document.getElementById('overlay-carrito').style.display = 'none';
+    setTimeout(() => {
+        document.getElementById('panel-carrito').style.display = 'none';
+    }, 300);
+}
+
+// ==========================================
+// FUNCIÓN 7: PROCESAR LA COMPRA (BOLETA VS FACTURA)
+// ==========================================
+window.procesarCompra = function() {
+    const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
+    if (carrito.length === 0) {
+        alert("Agrega al menos un producto para confirmar tu pedido.");
+        return;
+    }
+
+    const usuario = JSON.parse(localStorage.getItem('usuarioStarbucks'));
+    
+    // Aquí aplicamos tu lógica de facturación
+    let tipoComprobante = "BOLETA ELECTRÓNICA";
+    let datosCliente = `Cliente: ${usuario.nombre}`;
+
+    // Si tiene RUC y no está vacío, generamos Factura
+    if (usuario.ruc && usuario.ruc.trim() !== "" && usuario.ruc !== "EMPTY") {
+        tipoComprobante = "FACTURA ELECTRÓNICA";
+        datosCliente += `\nRUC: ${usuario.ruc}`;
+    }
+
+    // Simulamos la impresión del ticket
+    let ticket = `☕ --- STARBUCKS PERÚ ---\n`;
+    ticket += `${tipoComprobante}\n`;
+    ticket += `${datosCliente}\n`;
+    ticket += `------------------------------\n`;
+    let total = 0;
+    carrito.forEach(item => {
+        ticket += `${item.cantidad}x ${item.nombre} - S/ ${(item.precio * item.cantidad).toFixed(2)}\n`;
+        total += (item.precio * item.cantidad);
+    });
+    ticket += `------------------------------\n`;
+    ticket += `TOTAL A PAGAR: S/ ${total.toFixed(2)}\n`;
+    ticket += `¡Tu pedido se está preparando!`;
+
+    alert(ticket);
+
+    // Vaciamos el carrito y cerramos
+    localStorage.removeItem('carritoStarbucks');
+    renderizarCarrito();
+    cerrarCarrito();
 }
 
 // ==========================================
@@ -199,17 +308,11 @@ window.agregarAlCarrito = function(nombreProducto, precio) {
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     cargarCatalogo();
-    actualizarHeader(); // Verifica si hay alguien logueado al abrir la página
+    actualizarHeader(); 
     
-    // Escuchar el evento de Registro
     const formRegistro = document.getElementById('form-registro');
-    if(formRegistro) {
-        formRegistro.addEventListener('submit', registrarCliente);
-    }
+    if(formRegistro) formRegistro.addEventListener('submit', registrarCliente);
 
-    // Escuchar el evento de Iniciar Sesión
     const formLogin = document.getElementById('form-login');
-    if(formLogin) {
-        formLogin.addEventListener('submit', iniciarSesion);
-    }
+    if(formLogin) formLogin.addEventListener('submit', iniciarSesion);
 });
