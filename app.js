@@ -48,6 +48,9 @@ function renderizarTarjetas(productos, contenedor) {
         if(prod.nombre.toLowerCase().includes('latte') || prod.nombre.toLowerCase().includes('jugo')) imgUrl = 'fav-3.jpg';
         else if(prod.nombre.toLowerCase().includes('mocha') || prod.nombre.toLowerCase().includes('descafeinado')) imgUrl = 'fav-2.jpg';
         
+        // Buscamos el ID del producto (asumimos que la columna se llama id_producto o id)
+        const idDelCafe = prod.id_producto || prod.id;
+
         const tarjetaHTML = `
             <div class="card" style="width: 30%; min-width: 250px; background-color: var(--blanco); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; margin-bottom: 20px; display: flex; flex-direction: column;">
                 <img src="${imgUrl}" alt="${prod.nombre}" style="width: 100%; height: 250px; object-fit: cover;">
@@ -55,7 +58,7 @@ function renderizarTarjetas(productos, contenedor) {
                     <h3 style="color: var(--verde-sirena); margin-bottom: 10px;">${prod.nombre}</h3>
                     <p style="color: #555; margin-bottom: 15px; font-size: 0.9rem; flex-grow: 1;">${prod.descripcion}</p>
                     <span style="display: block; font-weight: bold; font-size: 1.3rem; color: var(--cafe-oscuro); margin-bottom: 15px;">S/ ${prod.precio.toFixed(2)}</span>
-                    <button onclick="agregarAlCarrito('${prod.nombre}', ${prod.precio})" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s;">Agregar al pedido</button>
+                    <button onclick="agregarAlCarrito('${idDelCafe}', '${prod.nombre}', ${prod.precio})" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s;">Agregar al pedido</button>
                 </div>
             </div>
         `;
@@ -164,7 +167,7 @@ async function iniciarSesion(event) {
 // ==========================================
 // FUNCIÓN 6: SISTEMA DEL CARRITO
 // ==========================================
-window.agregarAlCarrito = function(nombreProducto, precio) {
+window.agregarAlCarrito = function(idProducto, nombreProducto, precio) {
     const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioStarbucks'));
     if (!usuarioGuardado) {
         alert(`¡Hola! Para pedir un ${nombreProducto}, por favor inicia sesión o regístrate primero.`);
@@ -173,9 +176,10 @@ window.agregarAlCarrito = function(nombreProducto, precio) {
     }
 
     let carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
-    const indice = carrito.findIndex(item => item.nombre === nombreProducto);
+    // Verificamos si ya existe por ID
+    const indice = carrito.findIndex(item => item.id_producto === idProducto);
     if(indice !== -1) carrito[indice].cantidad += 1;
-    else carrito.push({ nombre: nombreProducto, precio: precio, cantidad: 1 });
+    else carrito.push({ id_producto: idProducto, nombre: nombreProducto, precio: precio, cantidad: 1 });
 
     localStorage.setItem('carritoStarbucks', JSON.stringify(carrito));
     renderizarCarrito(); 
@@ -238,7 +242,7 @@ window.procesarCompra = function() {
 }
 
 // ==========================================
-// FUNCIÓN 8: FINALIZAR PEDIDO EN SUPABASE (VENTA REAL)
+// FUNCIÓN 8: VENTA FINAL MAESTRO-DETALLE EN SUPABASE
 // ==========================================
 window.finalizarPedido = async function(metodoPago) {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
@@ -264,13 +268,43 @@ window.finalizarPedido = async function(metodoPago) {
             textoComprobante = "FACTURA ELECTRÓNICA";
         }
 
-        // Insertar en tu tabla t_ventas
-        const { data: venta, error: errorVenta } = await supabase
+        // --- PASO 1: INSERTAR LA CABECERA (t_ventas) ---
+        const { data: ventaNueva, error: errorVenta } = await supabase
             .from('t_ventas')
-            .insert([{ id_cliente: usuario.id_cliente, id_forma_pago: idFormaPago, id_comprobante: idComprobante, subtotal: totalVenta, total: totalVenta, estado_orden: 'Recibido' }]);
+            .insert([{ 
+                id_cliente: usuario.id_cliente, 
+                id_forma_pago: idFormaPago, 
+                id_comprobante: idComprobante, 
+                subtotal: totalVenta, 
+                total: totalVenta, 
+                estado_orden: 'Recibido' 
+            }])
+            .select(); // Pedimos que nos devuelva el ID generado
 
         if (errorVenta) throw errorVenta;
+        
+        const idVentaGenerada = ventaNueva[0].id_venta;
 
+        // --- PASO 2: PREPARAR LOS DETALLES (Cafés del carrito) ---
+        // Armamos un arreglo con todos los productos listos para la tabla t_detalle_venta
+        const detallesVenta = carrito.map(item => {
+            return {
+                id_venta: idVentaGenerada,
+                id_producto: item.id_producto,
+                cantidad: item.cantidad,
+                precio_unitario: item.precio,
+                subtotal: (item.precio * item.cantidad)
+            };
+        });
+
+        // --- PASO 3: INSERTAR EL DETALLE (t_detalle_venta) ---
+        const { error: errorDetalles } = await supabase
+            .from('t_detalle_venta')
+            .insert(detallesVenta);
+
+        if (errorDetalles) throw errorDetalles;
+
+        // --- FIN DEL PROCESO: ÉXITO TOTAL ---
         alert(`¡Venta registrada oficialmente en base de datos!\n\nPagaste con ${metodoPago} y tu ${textoComprobante} ha sido generada por un total de S/ ${totalVenta.toFixed(2)}.`);
         
         document.getElementById('modal-pago').style.display = 'none';
