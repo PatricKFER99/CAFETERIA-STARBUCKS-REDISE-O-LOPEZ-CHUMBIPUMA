@@ -4,7 +4,7 @@
 import { supabase } from './conexion.js';
 
 // ==========================================
-// FUNCIÓN 1: CARGAR EL CATÁLOGO (CON CACHÉ Y ANIMACIÓN)
+// FUNCIÓN 1: CARGAR EL CATÁLOGO (CON CACHÉ)
 // ==========================================
 async function cargarCatalogo() {
     const contenedor = document.getElementById('catalogo-container');
@@ -19,7 +19,7 @@ async function cargarCatalogo() {
         contenedor.innerHTML = `
             <div style="text-align: center; width: 100%; padding: 40px;">
                 <div style="border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--verde-sirena); animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                <p style="color: #777; margin-top: 15px; font-weight: bold;">Conectando con Supabase y preparando tu café...</p>
+                <p style="color: #777; margin-top: 15px; font-weight: bold;">Conectando con Supabase...</p>
                 <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
             </div>
         `;
@@ -48,7 +48,6 @@ function renderizarTarjetas(productos, contenedor) {
         if(prod.nombre.toLowerCase().includes('latte') || prod.nombre.toLowerCase().includes('jugo')) imgUrl = 'fav-3.jpg';
         else if(prod.nombre.toLowerCase().includes('mocha') || prod.nombre.toLowerCase().includes('descafeinado')) imgUrl = 'fav-2.jpg';
         
-        // Buscamos el ID del producto (asumimos que la columna se llama id_producto o id)
         const idDelCafe = prod.id_producto || prod.id;
 
         const tarjetaHTML = `
@@ -67,11 +66,10 @@ function renderizarTarjetas(productos, contenedor) {
 }
 
 // ==========================================
-// FUNCIÓN 2: REGISTRAR UN NUEVO CLIENTE (Guarda ID)
+// FUNCIÓN 2: REGISTRAR CLIENTE
 // ==========================================
 async function registrarCliente(event) {
     event.preventDefault(); 
-    
     const nombre = document.getElementById('reg-nombre').value;
     const apaterno = document.getElementById('reg-apaterno').value;
     const amaterno = document.getElementById('reg-amaterno').value;
@@ -88,17 +86,10 @@ async function registrarCliente(event) {
             .select(); 
             
         if (error) throw error;
-        
         const nuevoCliente = data[0]; 
-        localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
-            id_cliente: nuevoCliente.id_cliente, 
-            nombre: nombre, 
-            ruc: ruc,
-            correo: correo
-        }));
+        localStorage.setItem('usuarioStarbucks', JSON.stringify({ id_cliente: nuevoCliente.id_cliente, nombre: nombre, ruc: ruc, correo: correo }));
         actualizarHeader(); 
-        
-        alert('¡Cuenta creada exitosamente! Bienvenido a Starbucks Rewards.');
+        alert('¡Cuenta creada exitosamente!');
         document.getElementById('modal-registro').style.display = 'none';
         document.getElementById('form-registro').reset(); 
     } catch (error) {
@@ -108,7 +99,7 @@ async function registrarCliente(event) {
 }
 
 // ==========================================
-// FUNCIÓN 3: ACTUALIZAR EL HEADER
+// FUNCIÓN 3 & 4: HEADER Y SESIÓN
 // ==========================================
 function actualizarHeader() {
     const contenedorUsuario = document.getElementById('menu-usuario');
@@ -124,18 +115,12 @@ function actualizarHeader() {
     }
 }
 
-// ==========================================
-// FUNCIÓN 4: CERRAR SESIÓN
-// ==========================================
 window.cerrarSesion = function() {
     localStorage.removeItem('usuarioStarbucks'); 
     localStorage.removeItem('carritoStarbucks'); 
     location.reload(); 
 }
 
-// ==========================================
-// FUNCIÓN 5: INICIAR SESIÓN (Guarda ID)
-// ==========================================
 async function iniciarSesion(event) {
     event.preventDefault();
     const correo = document.getElementById('login-correo').value;
@@ -146,12 +131,7 @@ async function iniciarSesion(event) {
         if (error) throw error;
         
         if (cliente) {
-            localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
-                id_cliente: cliente.id_cliente, 
-                nombre: cliente.nombre_completo, 
-                ruc: cliente.ruc,
-                correo: cliente.correo
-            }));
+            localStorage.setItem('usuarioStarbucks', JSON.stringify({ id_cliente: cliente.id_cliente, nombre: cliente.nombre_completo, ruc: cliente.ruc, correo: cliente.correo }));
             actualizarHeader(); 
             const primerNombre = cliente.nombre_completo.split(' ')[0];
             alert(`¡Qué bueno verte de nuevo, ${primerNombre}!`);
@@ -160,23 +140,22 @@ async function iniciarSesion(event) {
         }
     } catch (error) {
         console.error("Error al iniciar sesión:", error);
-        alert('Correo o contraseña incorrectos. Por favor, intenta de nuevo.');
+        alert('Correo o contraseña incorrectos.');
     }
 }
 
 // ==========================================
-// FUNCIÓN 6: SISTEMA DEL CARRITO
+// FUNCIÓN 5: CARRITO
 // ==========================================
 window.agregarAlCarrito = function(idProducto, nombreProducto, precio) {
     const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioStarbucks'));
     if (!usuarioGuardado) {
-        alert(`¡Hola! Para pedir un ${nombreProducto}, por favor inicia sesión o regístrate primero.`);
+        alert(`Por favor inicia sesión para pedir un ${nombreProducto}.`);
         document.getElementById('modal-login').style.display = 'flex';
         return; 
     }
 
     let carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
-    // Verificamos si ya existe por ID
     const indice = carrito.findIndex(item => item.id_producto === idProducto);
     if(indice !== -1) carrito[indice].cantidad += 1;
     else carrito.push({ id_producto: idProducto, nombre: nombreProducto, precio: precio, cantidad: 1 });
@@ -230,26 +209,61 @@ window.cerrarCarrito = function() {
 }
 
 // ==========================================
-// FUNCIÓN 7: ABRIR MODAL DE PAGOS
+// FUNCIÓN 6: CARGAR DISTRITOS Y ABRIR PAGO
 // ==========================================
-window.procesarCompra = function() {
+window.procesarCompra = async function() {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     if (carrito.length === 0) {
         alert("Agrega al menos un producto para confirmar tu pedido.");
         return;
     }
+
+    // Abrimos el modal de pago
     document.getElementById('modal-pago').style.display = 'flex';
+
+    // Cargamos los distritos en el selector si está vacío
+    const selectDistrito = document.getElementById('select-distrito');
+    if (selectDistrito.options.length <= 1) {
+        try {
+            const { data: distritos, error } = await supabase
+                .from('t_distrito')
+                .select('id_distrito, nombre')
+                .order('nombre', { ascending: true });
+
+            if (error) throw error;
+
+            selectDistrito.innerHTML = '<option value="">-- Selecciona tu distrito --</option>';
+            distritos.forEach(d => {
+                selectDistrito.innerHTML += `<option value="${d.id_distrito}">${d.nombre}</option>`;
+            });
+        } catch (err) {
+            console.error("Error al cargar distritos:", err);
+            selectDistrito.innerHTML = '<option value="">Error al cargar distritos</option>';
+        }
+    }
 }
 
 // ==========================================
-// FUNCIÓN 8: VENTA FINAL MAESTRO-DETALLE EN SUPABASE
+// FUNCIÓN 7: FINALIZAR PEDIDO (CON DISTRITO Y DIRECCIÓN)
 // ==========================================
 window.finalizarPedido = async function(metodoPago) {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     const usuario = JSON.parse(localStorage.getItem('usuarioStarbucks'));
-    
+    const idDistritoSeleccionado = document.getElementById('select-distrito').value;
+    const direccionTexto = document.getElementById('input-direccion').value;
+
     if (!usuario.id_cliente) {
-        alert("Tu sesión está desactualizada. Por favor, cierra sesión y vuelve a ingresar para comprar.");
+        alert("Tu sesión está desactualizada. Vuelve a iniciar sesión.");
+        return;
+    }
+
+    if (!idDistritoSeleccionado) {
+        alert("Por favor selecciona un distrito para el envío.");
+        return;
+    }
+
+    if (!direccionTexto.trim()) {
+        alert("Por favor escribe tu dirección exacta.");
         return;
     }
 
@@ -268,7 +282,7 @@ window.finalizarPedido = async function(metodoPago) {
             textoComprobante = "FACTURA ELECTRÓNICA";
         }
 
-        // --- PASO 1: INSERTAR LA CABECERA (t_ventas) ---
+        // --- 1. INSERTAR CABECERA (Con Distrito y Dirección) ---
         const { data: ventaNueva, error: errorVenta } = await supabase
             .from('t_ventas')
             .insert([{ 
@@ -277,35 +291,31 @@ window.finalizarPedido = async function(metodoPago) {
                 id_comprobante: idComprobante, 
                 subtotal: totalVenta, 
                 total: totalVenta, 
-                estado_orden: 'Recibido' 
+                estado_orden: 'Recibido',
+                id_distrito: parseInt(idDistritoSeleccionado),
+                direccion_envio: direccionTexto
             }])
-            .select(); // Pedimos que nos devuelva el ID generado
+            .select(); 
 
         if (errorVenta) throw errorVenta;
-        
         const idVentaGenerada = ventaNueva[0].id_venta;
 
-        // --- PASO 2: PREPARAR LOS DETALLES (Cafés del carrito) ---
-        // Armamos un arreglo con todos los productos listos para la tabla t_detalle_venta
-        const detallesVenta = carrito.map(item => {
-            return {
-                id_venta: idVentaGenerada,
-                id_producto: item.id_producto,
-                cantidad: item.cantidad,
-                precio_unitario: item.precio,
-                subtotal: (item.precio * item.cantidad)
-            };
-        });
+        // --- 2. INSERTAR DETALLES ---
+        const detallesVenta = carrito.map(item => ({
+            id_venta: idVentaGenerada,
+            id_producto: item.id_producto,
+            cantidad: item.cantidad,
+            precio_unitario: item.precio,
+            subtotal: (item.precio * item.cantidad)
+        }));
 
-        // --- PASO 3: INSERTAR EL DETALLE (t_detalle_venta) ---
         const { error: errorDetalles } = await supabase
             .from('t_detalle_venta')
             .insert(detallesVenta);
 
         if (errorDetalles) throw errorDetalles;
 
-        // --- FIN DEL PROCESO: ÉXITO TOTAL ---
-        alert(`¡Venta registrada oficialmente en base de datos!\n\nPagaste con ${metodoPago} y tu ${textoComprobante} ha sido generada por un total de S/ ${totalVenta.toFixed(2)}.`);
+        alert(`¡Pedido y Delivery registrados con éxito!\n\nTu ${textoComprobante} ha sido generada. Enviaremos tu pedido a tu distrito seleccionado.`);
         
         document.getElementById('modal-pago').style.display = 'none';
         localStorage.removeItem('carritoStarbucks');
@@ -313,13 +323,13 @@ window.finalizarPedido = async function(metodoPago) {
         cerrarCarrito();
 
     } catch (error) {
-        console.error("Error crítico al procesar venta en Supabase:", error);
-        alert("Hubo un problema procesando tu pedido. Intenta nuevamente.");
+        console.error("Error crítico al procesar venta:", error);
+        alert("Hubo un problema procesando tu pedido.");
     }
 }
 
 // ==========================================
-// INICIALIZACIÓN: (¡EL MOTOR DE ARRANQUE!)
+// INICIALIZACIÓN
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     cargarCatalogo();

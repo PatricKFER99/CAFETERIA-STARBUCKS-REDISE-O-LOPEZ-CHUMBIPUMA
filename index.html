@@ -137,30 +137,35 @@
             <button onclick="procesarCompra()" style="width: 100%; background: var(--verde-menta); color: var(--verde-sirena); padding: 15px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">Confirmar Compra</button>
         </div>
     </div>
-    <!-- ==========================================
-         MODAL DE MÉTODO DE PAGO
-         ========================================== -->
-    <div id="modal-pago" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.7); z-index: 2500; justify-content: center; align-items: center; backdrop-filter: blur(3px);">
-        <div style="background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center;">
-            <h2 style="color: var(--verde-sirena); margin-bottom: 25px; font-size: 1.6rem;">¿Cómo deseas pagar?</h2>
-            
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <!-- Botón Yape -->
-                <button onclick="finalizarPedido('Yape')" style="background: #74005e; color: white; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">📱 Pagar con Yape</button>
-                
-                <!-- Botón Plin -->
-                <button onclick="finalizarPedido('Plin')" style="background: #00d2b6; color: white; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">📱 Pagar con Plin</button>
-                
-                <!-- Botón Tarjeta -->
-                <button onclick="finalizarPedido('Tarjeta')" style="background: var(--cafe-oscuro); color: white; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">💳 Tarjeta Crédito / Débito</button>
-                
-                <!-- Botón Efectivo -->
-                <button onclick="finalizarPedido('Efectivo')" style="background: #28a745; color: white; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">💵 Pago en Efectivo</button>
-            </div>
-            
-            <button type="button" onclick="document.getElementById('modal-pago').style.display='none'" style="background: none; border: none; color: #888; text-decoration: underline; cursor: pointer; margin-top: 25px; font-size: 1rem;">Cancelar y volver al carrito</button>
+   <!-- MODAL DE PAGO Y ENVÍO -->
+<div id="modal-pago" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+        <h2 style="color: var(--verde-sirena); margin-bottom: 20px; text-align: center;">Completa tu Envió y Pago</h2>
+        
+        <!-- Formulario de Ubicación -->
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333; font-size: 0.9rem;">Selecciona tu Distrito:</label>
+            <select id="select-distrito" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                <option value="">Cargando distritos...</option>
+            </select>
         </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333; font-size: 0.9rem;">Dirección Exacta (Calle / Nro / Referencia):</label>
+            <input type="text" id="input-direccion" placeholder="Ej. Av. Larco 123, Dpto 402" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+        </div>
+
+        <p style="font-weight: bold; margin-bottom: 15px; color: #555; text-align: center;">Elige tu método de pago:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+            <button onclick="finalizarPedido('Yape')" style="background: #7415b9; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Pagar con Yape / Plin</button>
+            <button onclick="finalizarPedido('Tarjeta')" style="background: var(--verde-sirena); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Tarjeta de Crédito / Débito</button>
+            <button onclick="finalizarPedido('Efectivo')" style="background: #555; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Efectivo contra entrega</button>
+        </div>
+
+        <button onclick="document.getElementById('modal-pago').style.display='none'" style="width: 100%; background: #ccc; color: #333; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;">Cancelar</button>
     </div>
+</div>
 
     <!-- CONEXIÓN A SUPABASE Y LÓGICA DEL SISTEMA -->
     <script type="module" src="app.js"></script>
