@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Starbucks Perú | Propuesta Premium</title>
+    <title>Starbucks Perú | Inicio</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body>
+<body style="margin: 0; font-family: 'Open Sans', sans-serif; background-color: var(--crema, #f9f6f0);">
 
     <!-- HEADER UNIFICADO MAESTRO -->
     <header class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background-color: var(--verde-sirena, #006241); position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); box-sizing: border-box;">
@@ -20,7 +20,7 @@
         <!-- NAVEGACIÓN CENTRAL -->
         <nav style="flex-grow: 1; text-align: center;">
             <ul class="nav-links" style="display: inline-flex; gap: 35px; list-style: none; margin: 0; padding: 0;">
-                <li><a href="index.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Inicio</a></li>
+                <li><a href="index.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem; border-bottom: 2px solid #d4e9e2; padding-bottom: 3px;">Inicio</a></li>
                 <li><a href="promociones.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Promociones</a></li>
                 <li><a href="catalogo.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Catálogo</a></li>
                 <li><a href="contacto.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Contacto</a></li>
@@ -29,39 +29,60 @@
 
         <!-- CONTENEDOR DINÁMICO DE USUARIO (Gestionado automáticamente por app.js) -->
         <div id="menu-usuario" style="display: flex; align-items: center; gap: 15px;">
-            <!-- Estado por defecto (Si no ha iniciado sesión): Muestra Registrarse e Iniciar Sesión -->
+            <!-- Estado por defecto -->
             <button onclick="document.getElementById('modal-registro').style.display='flex'" style="background: transparent; border: 1px solid white; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: 0.3s;">Registrarse</button>
             <button onclick="document.getElementById('modal-login').style.display='flex'" style="background: white; border: none; color: var(--verde-sirena, #006241); padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: 0.3s;">Iniciar Sesión</button>
         </div>
     </header>
 
-    <!-- HEROE O INICIO -->
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>El arte del café,<br>ahora a un clic.</h1>
-                <p>Descubre nuestra nueva experiencia digital. Más rápida, más intuitiva, más tuya.</p>
-                <a href="catalogo.html" class="btn-secondary">Ver Menú Completo</a>
+    <main style="padding-top: 80px;">
+        <!-- HEROE O INICIO (MANTENIDO DE TU CÓDIGO) -->
+        <section class="hero" style="background-color: var(--cafe-oscuro, #2c1d11); color: white; text-align: center; padding: 60px 5%;">
+            <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
+                <h1 style="font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin-bottom: 20px; color: #d4e9e2;">El arte del café,<br>ahora a un clic.</h1>
+                <p style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 30px; color: #e5e5e5;">Descubre nuestra nueva experiencia digital. Más rápida, más intuitiva, más tuya.</p>
+                <a href="catalogo.html" class="btn-secondary" style="display: inline-block; background-color: var(--verde-sirena, #006241); color: white; padding: 15px 35px; border-radius: 30px; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; border: 2px solid var(--verde-sirena, #006241);">Ver Menú Completo</a>
             </div>
         </section>
 
-        <!-- SECCIÓN: EL CATÁLOGO (DINÁMICO DESDE SUPABASE) -->
-        <section class="bestsellers" style="padding: 80px 10%; background-color: var(--blanco);">
-            <h2 class="section-title" style="color: var(--verde-sirena); text-align: center; margin-bottom: 50px;">Nuestro Menú</h2>
-            
-            <!-- CONTENEDOR VACÍO: AQUÍ SE LLENARÁ CON JAVASCRIPT Y SUPABASE -->
-            <div id="catalogo-container" class="cards-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
-                <!-- Un mensaje temporal mientras carga la base de datos -->
-                <p id="mensaje-carga" style="color: #555; font-size: 1.2rem;">Cargando catálogo desde la base de datos...</p>
+        <!-- ========================================== -->
+        <!-- NUEVAS SECCIONES PERSUASIVAS (REEMPLAZO)   -->
+        <!-- ========================================== -->
+
+        <!-- SECCIÓN 1: CONO ESTE -->
+        <section style="display: flex; flex-wrap: wrap; align-items: center; max-width: 1200px; margin: 60px auto; padding: 0 5%; gap: 40px;">
+            <div style="flex: 1; min-width: 300px;">
+                <h2 style="color: var(--verde-sirena, #006241); font-family: 'Montserrat', sans-serif; font-size: 2.2rem; margin-top: 0;">El lugar de tu preferencia, siempre cerca de ti</h2>
+                <p style="color: #555; font-size: 1.1rem; line-height: 1.8; margin-bottom: 25px;">Disfruta de la mejor experiencia Starbucks a un paso de tu casa o trabajo. Ya sea en Santa Anita o en cualquier punto de Lima Este, tenemos un espacio diseñado especialmente para que encuentres tu momento perfecto del día.</p>
+                <a href="contacto.html" style="color: var(--verde-sirena, #006241); font-weight: bold; text-decoration: none; border-bottom: 2px solid var(--verde-sirena, #006241); padding-bottom: 2px; font-size: 1.1rem;">Encuentra tu tienda &rarr;</a>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <img src="cono-este.jpg" alt="Local Cono Este" style="width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); object-fit: cover; height: 350px;">
             </div>
         </section>
 
-        <!-- BANNER: STARBUBKS APLICACION -->
-        <section class="rewards-banner" style="background-color: var(--verde-sirena); color: var(--blanco); padding: 60px 10%; display: flex; align-items: center; justify-content: space-between;">
+        <!-- SECCIÓN 2: SABORES ÚNICOS -->
+        <section style="display: flex; flex-wrap: wrap; align-items: center; max-width: 1200px; margin: 60px auto 80px auto; padding: 0 5%; gap: 40px; flex-direction: row-reverse;">
+            <div style="flex: 1; min-width: 300px;">
+                <h2 style="color: var(--verde-sirena, #006241); font-family: 'Montserrat', sans-serif; font-size: 2.2rem; margin-top: 0;">Promociones y sabores únicos</h2>
+                <p style="color: #555; font-size: 1.1rem; line-height: 1.8; margin-bottom: 25px;">Descubre nuestras bebidas de temporada y combos exclusivos pensados en deleitar tu paladar. Cada visita es una nueva oportunidad para probar algo extraordinario y salir de la rutina.</p>
+                <a href="promociones.html" style="display: inline-block; background: transparent; color: var(--verde-sirena, #006241); padding: 12px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; border: 2px solid var(--verde-sirena, #006241); transition: 0.3s;">Ver Promociones</a>
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <img src="fav-3.jpg" alt="Sabores Únicos" style="width: 100%; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); object-fit: cover; height: 350px;">
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- FIN NUEVAS SECCIONES                       -->
+        <!-- ========================================== -->
+
+        <!-- BANNER: STARBUCKS APLICACION (MANTENIDO DE TU CÓDIGO) -->
+        <section class="rewards-banner" style="background-color: var(--verde-sirena); color: white; padding: 60px 10%; display: flex; align-items: center; justify-content: space-between;">
             <div style="max-width: 60%;">
-                <h2 style="font-size: 2.5rem; margin-bottom: 15px; color: var(--verde-menta);">Únete a Starbucks Rewards</h2>
+                <h2 style="font-size: 2.5rem; margin-bottom: 15px; color: var(--verde-menta, #d4e9e2);">Únete a Starbucks Rewards</h2>
                 <p style="font-size: 1.2rem; line-height: 1.5; margin-bottom: 20px;">Gana Estrellas en cada compra, obtén bebidas gratis y disfruta de beneficios exclusivos. La fidelidad tiene un sabor increíble.</p>
-                <a href="#" onclick="document.getElementById('modal-registro').style.display='flex'" class="btn-secondary" style="background-color: var(--verde-menta); color: var(--verde-sirena); border: none; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold;">Registrarse Gratis</a>
+                <a href="#" onclick="document.getElementById('modal-registro').style.display='flex'" class="btn-secondary" style="background-color: var(--verde-menta, #d4e9e2); color: var(--verde-sirena, #006241); border: none; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold;">Registrarse Gratis</a>
             </div>
             <div style="width: 35%;">
                 <img src="app-rewards.png" alt="Starbucks App" style="width: 100%; max-width: 300px; transform: rotate(-5deg);">
@@ -69,17 +90,17 @@
         </section>
     </main>
 
-    <!-- PIE DE PÁGINAAAA -->
-    <footer>
-        <p>&copy; 2026 Starbucks Coffee Company. Rediseño Académico-Hecho por Patrick Fernando Lopez Meza & Luis Chumbipuma.</p>
+    <!-- PIE DE PÁGINA (MANTENIDO DE TU CÓDIGO) -->
+    <footer style="background-color: var(--cafe-oscuro, #2c1d11); color: white; text-align: center; padding: 25px;">
+        <p style="margin: 0;">&copy; 2026 Starbucks Coffee Company. Rediseño Académico-Hecho por Patrick Fernando Lopez Meza & Luis Chumbipuma.</p>
     </footer>
 
     <!-- ==========================================
-         MODALES DE AUTENTICACIÓN (OCULTOS POR DEFECTO)
+         MODALES DE AUTENTICACIÓN Y CARRITO (MANTENIDOS INTACTOS)
          ========================================== -->
          
     <!-- MODAL DE REGISTRO -->
-    <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
             <h2 style="color: var(--verde-sirena); margin-bottom: 25px; text-align: center;">Crear Cuenta</h2>
             <form id="form-registro" style="display: flex; flex-direction: column; gap: 15px;">
@@ -103,7 +124,7 @@
     </div>
 
     <!-- MODAL DE LOGIN -->
-    <div id="modal-login" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+    <div id="modal-login" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
             <h2 style="color: var(--verde-sirena); margin-bottom: 25px; text-align: center;">Iniciar Sesión</h2>
             <form id="form-login" style="display: flex; flex-direction: column; gap: 15px;">
@@ -115,73 +136,66 @@
             </form>
         </div>
     </div>
-    <!-- ==========================================
-         PANEL LATERAL DEL CARRITO (ESTILO APP MODERNA)
-         ========================================== -->
+
+    <!-- PANEL LATERAL DEL CARRITO -->
     <div id="overlay-carrito" onclick="cerrarCarrito()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1999; backdrop-filter: blur(2px);"></div>
     
-    <div id="panel-carrito" style="display: none; position: fixed; top: 0; right: -400px; width: 100%; max-width: 400px; height: 100vh; background: var(--blanco); box-shadow: -5px 0 25px rgba(0,0,0,0.2); z-index: 2000; flex-direction: column; transition: right 0.3s ease;">
-        
-        <!-- Cabecera del Carrito -->
-        <div style="padding: 20px; background: var(--verde-sirena); color: white; display: flex; justify-content: space-between; align-items: center;">
+    <div id="panel-carrito" style="display: none; position: fixed; top: 0; right: -400px; width: 100%; max-width: 400px; height: 100vh; background: white; box-shadow: -5px 0 25px rgba(0,0,0,0.2); z-index: 2000; flex-direction: column; transition: right 0.3s ease;">
+        <div style="padding: 20px; background: var(--verde-sirena, #006241); color: white; display: flex; justify-content: space-between; align-items: center;">
             <h2 style="margin: 0; font-size: 1.5rem;">Mi Pedido 🛒</h2>
             <button onclick="cerrarCarrito()" style="background: none; border: none; color: white; font-size: 2rem; cursor: pointer; line-height: 1;">&times;</button>
         </div>
         
-        <!-- Lista de Productos -->
-        <div id="items-carrito" style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
-            <!-- Aquí JavaScript dibujará los cafés que vayas agregando -->
-        </div>
+        <div id="items-carrito" style="flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;"></div>
         
-        <!-- Pie del Carrito y Botón de Pago -->
         <div style="padding: 20px; border-top: 1px solid #ddd; background: #f9f9f9;">
-            <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: var(--cafe-oscuro);">
+            <div style="display: flex; justify-content: space-between; font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: var(--cafe-oscuro, #2c1d11);">
                 <span>Total:</span>
                 <span id="total-carrito">S/ 0.00</span>
             </div>
-            <button onclick="procesarCompra()" style="width: 100%; background: var(--verde-menta); color: var(--verde-sirena); padding: 15px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">Confirmar Compra</button>
+            <button onclick="procesarCompra()" style="width: 100%; background: var(--verde-sirena, #006241); color: white; padding: 15px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 1.1rem;">Confirmar Compra</button>
         </div>
     </div>
-   <!-- MODAL DE PAGO Y ENVÍO -->
-<div id="modal-pago" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-    <div style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
-        <h2 style="color: var(--verde-sirena); margin-bottom: 20px; text-align: center;">Completa tu Envió y Pago</h2>
-        
-        <!-- Formulario de Ubicación -->
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333; font-size: 0.9rem;">Selecciona tu Distrito:</label>
-            <select id="select-distrito" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
-                <option value="">Cargando distritos...</option>
-            </select>
-        </div>
 
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333; font-size: 0.9rem;">Dirección Exacta (Calle / Nro / Referencia):</label>
-            <input type="text" id="input-direccion" placeholder="Ej. Av. Larco 123, Dpto 402" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
-        </div>
+    <!-- MODAL DE PAGO Y ENVÍO -->
+    <div id="modal-pago" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2001; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <h2 style="color: var(--verde-sirena); margin-bottom: 20px; text-align: center;">Completa tu Envío y Pago</h2>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333; font-size: 0.9rem;">Selecciona tu Distrito:</label>
+                <select id="select-distrito" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+                    <option value="">Cargando distritos...</option>
+                </select>
+            </div>
 
-        <p style="font-weight: bold; margin-bottom: 15px; color: #555; text-align: center;">Elige tu método de pago:</p>
-        
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-            <button onclick="finalizarPedido('Yape')" style="background: #7415b9; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Pagar con Yape / Plin</button>
-            <button onclick="finalizarPedido('Tarjeta')" style="background: var(--verde-sirena); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Tarjeta de Crédito / Débito</button>
-            <button onclick="finalizarPedido('Efectivo')" style="background: #555; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Efectivo contra entrega</button>
-        </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #333; font-size: 0.9rem;">Dirección Exacta (Calle / Nro / Referencia):</label>
+                <input type="text" id="input-direccion" placeholder="Ej. Av. Larco 123, Dpto 402" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem;">
+            </div>
 
-        <button onclick="document.getElementById('modal-pago').style.display='none'" style="width: 100%; background: #ccc; color: #333; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;">Cancelar</button>
+            <p style="font-weight: bold; margin-bottom: 15px; color: #555; text-align: center;">Elige tu método de pago:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <button onclick="finalizarPedido('Yape')" style="background: #7415b9; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Pagar con Yape / Plin</button>
+                <button onclick="finalizarPedido('Tarjeta')" style="background: var(--verde-sirena); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Tarjeta de Crédito / Débito</button>
+                <button onclick="finalizarPedido('Efectivo')" style="background: #555; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Efectivo contra entrega</button>
+            </div>
+
+            <button onclick="document.getElementById('modal-pago').style.display='none'" style="width: 100%; background: #ccc; color: #333; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold;">Cancelar</button>
+        </div>
     </div>
-</div>
 
     <!-- CONEXIÓN A SUPABASE Y LÓGICA DEL SISTEMA -->
     <script type="module" src="app.js"></script>
     
     <!-- SCRIPT SENCILLO PARA ABRIR LOS MODALES DESDE LA CABECERA -->
     <script>
-        document.getElementById('btn-abrir-registro').addEventListener('click', function(e) {
+        document.getElementById('btn-abrir-registro')?.addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('modal-registro').style.display = 'flex';
         });
-        document.getElementById('btn-abrir-login').addEventListener('click', function(e) {
+        document.getElementById('btn-abrir-login')?.addEventListener('click', function(e) {
             e.preventDefault();
             document.getElementById('modal-login').style.display = 'flex';
         });
