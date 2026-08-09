@@ -10,7 +10,6 @@
 <body>
 
     <!-- BARRA DE NAVEGACION -->
-    
     <header class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%;">
         <div class="logo-container">
             <img src="logo.png" alt="Starbucks Logo" class="logo" style="width: 50px;">
@@ -24,8 +23,8 @@
             </ul>
         </nav>
         
-        <!-- BOTONES DE AUTENTICACIÓN ESTILO STARBUCKS -->
-        <div class="auth-buttons" style="display: flex; gap: 20px; align-items: center;">
+        <!-- BOTONES DE AUTENTICACIÓN ESTILO STARBUCKS (CON ID PARA SESIÓN) -->
+        <div id="menu-usuario" class="auth-buttons" style="display: flex; gap: 20px; align-items: center;">
             <a href="#" id="btn-abrir-registro" style="color: var(--blanco); text-decoration: none; font-weight: 600;">Registrarse</a>
             <a href="#" id="btn-abrir-login" class="btn-secondary" style="background-color: transparent; color: var(--blanco); padding: 8px 24px; border-radius: 25px; text-decoration: none; font-weight: bold; border: 1px solid var(--blanco);">Iniciar Sesión</a>
         </div>
@@ -90,7 +89,7 @@
                     <input type="text" id="reg-ruc" placeholder="RUC (Opcional)" maxlength="11" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 50%;">
                 </div>
                 <input type="email" id="reg-correo" placeholder="Correo electrónico" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <input type="password" id="reg-password" placeholder="Contraseña" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                <input type="password" id="reg-password" placeholder="Contraseña" required autocomplete="new-password" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
                 
                 <button type="submit" style="background-color: var(--verde-sirena); color: white; padding: 15px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 10px;">Registrarme</button>
                 <button type="button" onclick="document.getElementById('modal-registro').style.display='none'" style="background: none; border: none; color: #777; text-decoration: underline; cursor: pointer; margin-top: 5px;">Cancelar</button>
@@ -104,7 +103,7 @@
             <h2 style="color: var(--verde-sirena); margin-bottom: 25px; text-align: center;">Iniciar Sesión</h2>
             <form id="form-login" style="display: flex; flex-direction: column; gap: 15px;">
                 <input type="email" id="login-correo" placeholder="Correo electrónico" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
-                <input type="password" id="login-password" placeholder="Contraseña" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                <input type="password" id="login-password" placeholder="Contraseña" required autocomplete="current-password" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
                 
                 <button type="submit" style="background-color: var(--verde-sirena); color: white; padding: 15px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 10px;">Ingresar</button>
                 <button type="button" onclick="document.getElementById('modal-login').style.display='none'" style="background: none; border: none; color: #777; text-decoration: underline; cursor: pointer; margin-top: 5px;">Cancelar</button>

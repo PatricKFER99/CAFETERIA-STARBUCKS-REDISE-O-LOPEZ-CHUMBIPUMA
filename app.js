@@ -81,6 +81,14 @@ async function registrarCliente(event) {
             
         if (error) throw error;
         
+        // --- GUARDAR SESIÓN EN EL NAVEGADOR ---
+        localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
+            nombre: nombre, 
+            ruc: ruc,
+            correo: correo
+        }));
+        actualizarHeader(); // Cambia los botones por el saludo
+        
         alert('¡Cuenta creada exitosamente! Bienvenido a Starbucks Rewards.');
         document.getElementById('modal-registro').style.display = 'none';
         document.getElementById('form-registro').reset(); 
@@ -92,10 +100,42 @@ async function registrarCliente(event) {
 }
 
 // ==========================================
+// FUNCIÓN 3: ACTUALIZAR EL HEADER (BIENVENIDA)
+// ==========================================
+function actualizarHeader() {
+    const contenedorUsuario = document.getElementById('menu-usuario');
+    const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioStarbucks'));
+
+    if (usuarioGuardado && contenedorUsuario) {
+        // Extraemos el primer nombre
+        const primerNombre = usuarioGuardado.nombre.split(' ')[0];
+        
+        // Reemplazamos los botones por el saludo y el botón de salir
+        contenedorUsuario.innerHTML = `
+            <span style="color: var(--blanco); font-weight: bold; margin-right: 15px; font-size: 1.1rem;">
+                Bienvenido, ${primerNombre}
+            </span>
+            <button onclick="cerrarSesion()" style="background: transparent; border: 1px solid var(--blanco); color: var(--blanco); padding: 8px 20px; border-radius: 25px; cursor: pointer; font-weight: bold; transition: background 0.3s;">
+                Salir
+            </button>
+        `;
+    }
+}
+
+// ==========================================
+// FUNCIÓN 4: CERRAR SESIÓN
+// ==========================================
+window.cerrarSesion = function() {
+    localStorage.removeItem('usuarioStarbucks'); // Borramos la memoria
+    location.reload(); // Recargamos la página
+}
+
+// ==========================================
 // INICIALIZACIÓN: Ejecutar al cargar la página
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     cargarCatalogo();
+    actualizarHeader(); // Verifica si hay alguien logueado al abrir la página
     
     const formRegistro = document.getElementById('form-registro');
     if(formRegistro) {
