@@ -1,5 +1,9 @@
-// 1. Importamos la conexión a Supabase que creamos en el paso anterior
-import { supabase } from './conexion.js';
+// ==========================================
+// 1. INICIALIZAR SUPABASE 
+// ==========================================
+const supabaseUrl = 'https://jztcmtekhdutgwdufhci.supabase.co';
+const supabaseKey = 'sb_publishable_2G1HCWh4Hn0FXB0kA1aXog_s6R3ATtS'; 
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // ==========================================
 // FUNCIÓN 1: CARGAR EL CATÁLOGO DINÁMICAMENTE
@@ -8,30 +12,24 @@ async function cargarCatalogo() {
     const contenedor = document.getElementById('catalogo-container');
     
     try {
-        // Hacemos un SELECT a la tabla T_PRODUCTO de Supabase
         const { data: productos, error } = await supabase
-            .from('T_PRODUCTO')
+            .from('t_producto') // Tabla en minúsculas
             .select('*');
             
         if (error) throw error;
         
-        // Limpiamos el mensaje de "Cargando..."
-        contenedor.innerHTML = '';
+        contenedor.innerHTML = ''; 
         
-        // Si no hay productos, mostramos un mensaje
         if (productos.length === 0) {
             contenedor.innerHTML = '<p style="color: var(--cafe-oscuro);">No hay productos disponibles en este momento.</p>';
             return;
         }
         
-        // Recorremos los productos que llegaron de la Base de Datos
         productos.forEach(prod => {
-            // Como no tenemos columna de imágenes en la BD, asignamos unas por defecto de tus archivos
-            let imgUrl = 'fav-1.jpg'; // Por defecto
+            let imgUrl = 'fav-1.jpg'; 
             if(prod.nombre.toLowerCase().includes('latte') || prod.nombre.toLowerCase().includes('jugo')) imgUrl = 'fav-3.jpg';
             else if(prod.nombre.toLowerCase().includes('mocha') || prod.nombre.toLowerCase().includes('descafeinado')) imgUrl = 'fav-2.jpg';
             
-            // Creamos la tarjeta HTML inyectando las variables de la BD (nombre, descripcion, precio)
             const tarjetaHTML = `
                 <div class="card" style="width: 30%; min-width: 250px; background-color: var(--blanco); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; margin-bottom: 20px; display: flex; flex-direction: column;">
                     <img src="${imgUrl}" alt="${prod.nombre}" style="width: 100%; height: 250px; object-fit: cover;">
@@ -43,8 +41,6 @@ async function cargarCatalogo() {
                     </div>
                 </div>
             `;
-            
-            // Inyectamos la tarjeta en el contenedor de la web
             contenedor.innerHTML += tarjetaHTML;
         });
         
@@ -58,9 +54,8 @@ async function cargarCatalogo() {
 // FUNCIÓN 2: REGISTRAR UN NUEVO CLIENTE
 // ==========================================
 async function registrarCliente(event) {
-    event.preventDefault(); // Evita que la página se recargue
+    event.preventDefault(); 
     
-    // Capturamos los valores del formulario
     const nombre = document.getElementById('reg-nombre').value;
     const apaterno = document.getElementById('reg-apaterno').value;
     const amaterno = document.getElementById('reg-amaterno').value;
@@ -71,9 +66,8 @@ async function registrarCliente(event) {
     const contrasena = document.getElementById('reg-password').value; 
     
     try {
-        // Hacemos un INSERT a la tabla T_CLIENTE
         const { data, error } = await supabase
-            .from('T_CLIENTE')
+            .from('t_cliente') // Tabla en minúsculas
             .insert([
                 { 
                     nombre_completo: nombre, 
@@ -89,10 +83,9 @@ async function registrarCliente(event) {
             
         if (error) throw error;
         
-        // Si todo sale bien, mostramos mensaje y cerramos el modal
         alert('¡Cuenta creada exitosamente! Bienvenido a Starbucks Rewards.');
         document.getElementById('modal-registro').style.display = 'none';
-        document.getElementById('form-registro').reset(); // Limpia los campos
+        document.getElementById('form-registro').reset(); 
         
     } catch (error) {
         console.error("Error al registrar:", error);
@@ -101,13 +94,11 @@ async function registrarCliente(event) {
 }
 
 // ==========================================
-// INICIALIZACIÓN: Cuando cargue la página, ejecutamos el código
+// INICIALIZACIÓN: Ejecutar al cargar la página
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Cargamos el catálogo de inmediato
     cargarCatalogo();
     
-    // 2. Le decimos al formulario de registro qué hacer cuando hagan clic en "Registrarme"
     const formRegistro = document.getElementById('form-registro');
     if(formRegistro) {
         formRegistro.addEventListener('submit', registrarCliente);
