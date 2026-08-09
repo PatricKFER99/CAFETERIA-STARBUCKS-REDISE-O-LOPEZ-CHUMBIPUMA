@@ -137,6 +137,30 @@
             <button onclick="procesarCompra()" style="width: 100%; background: var(--verde-menta); color: var(--verde-sirena); padding: 15px; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">Confirmar Compra</button>
         </div>
     </div>
+    <!-- ==========================================
+         MODAL DE MÉTODO DE PAGO
+         ========================================== -->
+    <div id="modal-pago" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.7); z-index: 2500; justify-content: center; align-items: center; backdrop-filter: blur(3px);">
+        <div style="background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center;">
+            <h2 style="color: var(--verde-sirena); margin-bottom: 25px; font-size: 1.6rem;">¿Cómo deseas pagar?</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <!-- Botón Yape -->
+                <button onclick="finalizarPedido('Yape')" style="background: #74005e; color: white; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">📱 Pagar con Yape</button>
+                
+                <!-- Botón Plin -->
+                <button onclick="finalizarPedido('Plin')" style="background: #00d2b6; color: white; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">📱 Pagar con Plin</button>
+                
+                <!-- Botón Tarjeta -->
+                <button onclick="finalizarPedido('Tarjeta')" style="background: var(--cafe-oscuro); color: white; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">💳 Tarjeta Crédito / Débito</button>
+                
+                <!-- Botón Efectivo -->
+                <button onclick="finalizarPedido('Efectivo')" style="background: #28a745; color: white; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem; transition: transform 0.2s;">💵 Pago en Efectivo</button>
+            </div>
+            
+            <button type="button" onclick="document.getElementById('modal-pago').style.display='none'" style="background: none; border: none; color: #888; text-decoration: underline; cursor: pointer; margin-top: 25px; font-size: 1rem;">Cancelar y volver al carrito</button>
+        </div>
+    </div>
 
     <!-- CONEXIÓN A SUPABASE Y LÓGICA DEL SISTEMA -->
     <script type="module" src="app.js"></script>

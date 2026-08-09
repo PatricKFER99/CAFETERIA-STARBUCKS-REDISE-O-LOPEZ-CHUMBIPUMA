@@ -260,7 +260,7 @@ window.cerrarCarrito = function() {
 }
 
 // ==========================================
-// FUNCIÓN 7: PROCESAR LA COMPRA (BOLETA VS FACTURA)
+// FUNCIÓN 7: PROCESAR LA COMPRA (ABRIR MODAL DE PAGO)
 // ==========================================
 window.procesarCompra = function() {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
@@ -268,51 +268,41 @@ window.procesarCompra = function() {
         alert("Agrega al menos un producto para confirmar tu pedido.");
         return;
     }
+    // Abrimos la pasarela de pagos
+    document.getElementById('modal-pago').style.display = 'flex';
+}
 
+// ==========================================
+// FUNCIÓN 8: FINALIZAR PEDIDO (PREPARAR DATOS PARA BD)
+// ==========================================
+window.finalizarPedido = async function(metodoPago) {
+    const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     const usuario = JSON.parse(localStorage.getItem('usuarioStarbucks'));
     
-    // Aquí aplicamos tu lógica de facturación
-    let tipoComprobante = "BOLETA ELECTRÓNICA";
-    let datosCliente = `Cliente: ${usuario.nombre}`;
+    // 1. Calculamos el total
+    let totalVenta = 0;
+    carrito.forEach(item => totalVenta += (item.precio * item.cantidad));
 
-    // Si tiene RUC y no está vacío, generamos Factura
+    // 2. Aplicamos regla de negocio: Factura o Boleta
+    let tipoComprobante = "BOLETA";
     if (usuario.ruc && usuario.ruc.trim() !== "" && usuario.ruc !== "EMPTY") {
-        tipoComprobante = "FACTURA ELECTRÓNICA";
-        datosCliente += `\nRUC: ${usuario.ruc}`;
+        tipoComprobante = "FACTURA";
     }
 
-    // Simulamos la impresión del ticket
-    let ticket = `☕ --- STARBUCKS PERÚ ---\n`;
-    ticket += `${tipoComprobante}\n`;
-    ticket += `${datosCliente}\n`;
-    ticket += `------------------------------\n`;
-    let total = 0;
-    carrito.forEach(item => {
-        ticket += `${item.cantidad}x ${item.nombre} - S/ ${(item.precio * item.cantidad).toFixed(2)}\n`;
-        total += (item.precio * item.cantidad);
-    });
-    ticket += `------------------------------\n`;
-    ticket += `TOTAL A PAGAR: S/ ${total.toFixed(2)}\n`;
-    ticket += `¡Tu pedido se está preparando!`;
+    // 3. AQUÍ HAREMOS EL INSERT A SUPABASE LUEGO (t_ventas y t_detalle_venta)
+    // Por ahora validamos que toda la data esté lista para enviarse
+    console.log(">> LISTO PARA INSERTAR EN SUPABASE:");
+    console.log("Comprobante:", tipoComprobante);
+    console.log("Método Pago:", metodoPago);
+    console.log("Total:", totalVenta);
+    console.log("Productos:", carrito);
 
-    alert(ticket);
-
-    // Vaciamos el carrito y cerramos
+    // 4. Mensaje visual de éxito para el cliente
+    alert(`¡Pago con ${metodoPago} procesado exitosamente!\n\nTu ${tipoComprobante} ha sido generada por un total de S/ ${totalVenta.toFixed(2)}.\n\n¡Gracias por tu compra, ${usuario.nombre.split(' ')[0]}!`);
+    
+    // 5. Limpiamos la pantalla y el carrito
+    document.getElementById('modal-pago').style.display = 'none';
     localStorage.removeItem('carritoStarbucks');
     renderizarCarrito();
     cerrarCarrito();
 }
-
-// ==========================================
-// INICIALIZACIÓN: Ejecutar al cargar la página
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
-    cargarCatalogo();
-    actualizarHeader(); 
-    
-    const formRegistro = document.getElementById('form-registro');
-    if(formRegistro) formRegistro.addEventListener('submit', registrarCliente);
-
-    const formLogin = document.getElementById('form-login');
-    if(formLogin) formLogin.addEventListener('submit', iniciarSesion);
-});
