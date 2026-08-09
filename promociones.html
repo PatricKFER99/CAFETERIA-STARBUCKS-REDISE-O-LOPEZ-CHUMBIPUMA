@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <!-- BARRA DE NAVEGACIÓN MULTIPÁGINA (ESTO FALTABA) -->
+    <!-- BARRA DE NAVEGACIÓN MULTIPÁGINA -->
     <header class="navbar">
         <div class="logo-container">
             <img src="logo.png" alt="Starbucks Logo" class="logo">
@@ -20,55 +20,57 @@
                 <li><a href="sucursales.html">Sucursales</a></li>
             </ul>
         </nav>
+        <!-- Contenedor del usuario (Necesario para que app.js reconozca la sesión aquí) -->
+        <div id="menu-usuario" style="display: flex; align-items: center;"></div>
     </header>
 
     <main style="padding-top: 120px; background-color: var(--crema); min-height: 100vh;">
-        <h1 class="section-title">Promociones Exclusivas</h1>
+        <h1 class="section-title" style="text-align: center;">Promociones Exclusivas</h1>
         
-        <div class="cards-container" style="flex-wrap: wrap; justify-content: center; gap: 40px; padding: 0 10%; padding-bottom: 60px;">
+        <div class="cards-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; padding: 0 10%; padding-bottom: 60px;">
             
             <div class="card" style="width: 30%;">
-                <img src="promo-1.jpg" alt="Promo 1">
-                <div class="card-info">
+                <img src="promo-1.jpg" alt="Promo 1" style="width: 100%; border-radius: 10px 10px 0 0;">
+                <div class="card-info" style="padding: 15px; text-align: center;">
                     <h3>Frappuccino 2x1</h3>
-                    <p>Lleva 2 por el precio de 1. ¡Ideal para compartir!</p>
-                    <a href="https://wa.me/51949187927?text=Hola,%20deseo%20pedir%20la%20promoción%20Frappuccino%202x1" target="_blank" class="btn-primary" style="display:block; margin-top:15px;">Pedir por WhatsApp</a>
+                    <p style="margin-bottom: 15px;">Lleva 2 por el precio de 1. ¡Ideal para compartir!</p>
+                    <button onclick="agregarAlCarrito('ac2a8338-73b4-4ba0-bbb6-377dc9cd63d9', 'Promo: Frappuccino 2x1', 18.00)" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s; font-weight: bold; background: var(--verde-sirena); color: white;">Agregar al Pedido</button>
                 </div>
             </div>
 
             <div class="card" style="width: 30%;">
-                <img src="promo-2.jpg" alt="Promo 2">
-                <div class="card-info">
+                <img src="promo-2.jpg" alt="Promo 2" style="width: 100%; border-radius: 10px 10px 0 0;">
+                <div class="card-info" style="padding: 15px; text-align: center;">
                     <h3>Combo Desayuno</h3>
-                    <p>Café Americano + Muffin de Arándanos por S/15.90</p>
-                    <a href="https://wa.me/51949187927?text=Hola,%20deseo%20pedir%20el%20Combo%20Desayuno" target="_blank" class="btn-primary" style="display:block; margin-top:15px;">Pedir por WhatsApp</a>
+                    <p style="margin-bottom: 15px;">Café Americano + Muffin de Arándanos por S/15.90</p>
+                    <button onclick="agregarAlCarrito('83a785ca-611a-4c60-943e-05583fb8420c', 'Combo Desayuno', 15.90)" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s; font-weight: bold; background: var(--verde-sirena); color: white;">Agregar al Pedido</button>
                 </div>
             </div>
 
             <div class="card" style="width: 30%;">
-                <img src="promo-3.jpg" alt="Promo 3">
-                <div class="card-info">
+                <img src="promo-3.jpg" alt="Promo 3" style="width: 100%; border-radius: 10px 10px 0 0;">
+                <div class="card-info" style="padding: 15px; text-align: center;">
                     <h3>Tarde Dulce</h3>
-                    <p>Cheesecake de Frambuesa + Latte Venti por S/22.00</p>
-                    <a href="https://wa.me/51949187927?text=Hola,%20deseo%20pedir%20la%20promoción%20Tarde%20Dulce" target="_blank" class="btn-primary" style="display:block; margin-top:15px;">Pedir por WhatsApp</a>
+                    <p style="margin-bottom: 15px;">Cheesecake de Frambuesa + Latte Venti por S/22.00</p>
+                    <button onclick="agregarAlCarrito('8886f7e8-0e17-42be-9666-5460c2f4f65b', 'Combo Tarde Dulce', 22.00)" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s; font-weight: bold; background: var(--verde-sirena); color: white;">Agregar al Pedido</button>
                 </div>
             </div>
 
             <div class="card" style="width: 30%;">
-                <img src="promo-4.jpg" alt="Promo 4">
-                <div class="card-info">
+                <img src="promo-4.jpg" alt="Promo 4" style="width: 100%; border-radius: 10px 10px 0 0;">
+                <div class="card-info" style="padding: 15px; text-align: center;">
                     <h3>Lunes de Refresher</h3>
-                    <p>30% de descuento en todos los Refreshers.</p>
-                    <a href="https://wa.me/51949187927?text=Hola,%20deseo%20pedir%20un%20Refresher%20con%20descuento" target="_blank" class="btn-primary" style="display:block; margin-top:15px;">Pedir por WhatsApp</a>
+                    <p style="margin-bottom: 15px;">30% de descuento en todos los Refreshers.</p>
+                    <button onclick="agregarAlCarrito('d0278bd2-4c0a-4db1-b4d4-e21e118d39be', 'Promo Lunes Refresher', 14.00)" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s; font-weight: bold; background: var(--verde-sirena); color: white;">Agregar al Pedido</button>
                 </div>
             </div>
 
             <div class="card" style="width: 30%;">
-                <img src="promo-5.jpg" alt="Promo 5">
-                <div class="card-info">
+                <img src="promo-5.jpg" alt="Promo 5" style="width: 100%; border-radius: 10px 10px 0 0;">
+                <div class="card-info" style="padding: 15px; text-align: center;">
                     <h3>Pack Godín</h3>
-                    <p>Caja de 4 sándwiches variados + 2 Jugos por S/35.00</p>
-                    <a href="https://wa.me/51949187927?text=Hola,%20deseo%20pedir%20el%20Pack%20Godín" target="_blank" class="btn-primary" style="display:block; margin-top:15px;">Pedir por WhatsApp</a>
+                    <p style="margin-bottom: 15px;">Caja de 4 sándwiches variados + 2 Jugos por S/35.00</p>
+                    <button onclick="agregarAlCarrito('684030fa-7406-4a52-b61a-e3c68c9cdcad', 'Pack Godín', 35.00)" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s; font-weight: bold; background: var(--verde-sirena); color: white;">Agregar al Pedido</button>
                 </div>
             </div>
 
@@ -76,9 +78,12 @@
     </main>
 
     <!-- PIE DE PÁGINA -->
-    <footer>
+    <footer style="text-align: center; padding: 20px;">
         <p>&copy; 2026 Starbucks Coffee Company. Rediseño Académico-Hecho por Patrick Fernando Lopez Meza & Luis Chumbipuma.</p>
     </footer>
+
+    <!-- SCRIPT PARA CONECTAR EL MOTOR ERP Y CARRITO -->
+    <script type="module" src="app.js"></script>
 
 </body>
 </html>
