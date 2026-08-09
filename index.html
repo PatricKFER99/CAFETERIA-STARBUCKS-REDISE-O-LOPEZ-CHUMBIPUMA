@@ -9,24 +9,29 @@
 </head>
 <body>
 
-    <!-- BARRA DE NAVEGACION -->
-    <header class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%;">
-        <div class="logo-container">
-            <img src="logo.png" alt="Starbucks Logo" class="logo" style="width: 50px;">
+    <!-- HEADER UNIFICADO MAESTRO -->
+    <header class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background-color: var(--verde-sirena, #006241); position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); box-sizing: border-box;">
+        
+        <!-- LOGO -->
+        <div class="logo-container" style="display: flex; align-items: center;">
+            <img src="logo.png" alt="Starbucks Logo" class="logo" style="height: 45px;">
         </div>
-        <nav style="flex-grow: 1; margin-left: 30px;">
-            <ul class="nav-links" style="display: flex; gap: 30px; list-style: none; margin: 0; padding: 0;">
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="promociones.html">Promociones</a></li>
-                <li><a href="catalogo.html">Catálogo</a></li>
-                <li><a href="contacto.html">Contacto</a></li>
+
+        <!-- NAVEGACIÓN CENTRAL -->
+        <nav style="flex-grow: 1; text-align: center;">
+            <ul class="nav-links" style="display: inline-flex; gap: 35px; list-style: none; margin: 0; padding: 0;">
+                <li><a href="index.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Inicio</a></li>
+                <li><a href="promociones.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Promociones</a></li>
+                <li><a href="catalogo.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Catálogo</a></li>
+                <li><a href="contacto.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Contacto</a></li>
             </ul>
         </nav>
-        
-        <!-- BOTONES DE AUTENTICACIÓN ESTILO STARBUCKS (CON ID PARA SESIÓN) -->
-        <div id="menu-usuario" class="auth-buttons" style="display: flex; gap: 20px; align-items: center;">
-            <a href="#" id="btn-abrir-registro" style="color: var(--blanco); text-decoration: none; font-weight: 600;">Registrarse</a>
-            <a href="#" id="btn-abrir-login" class="btn-secondary" style="background-color: transparent; color: var(--blanco); padding: 8px 24px; border-radius: 25px; text-decoration: none; font-weight: bold; border: 1px solid var(--blanco);">Iniciar Sesión</a>
+
+        <!-- CONTENEDOR DINÁMICO DE USUARIO (Gestionado automáticamente por app.js) -->
+        <div id="menu-usuario" style="display: flex; align-items: center; gap: 15px;">
+            <!-- Estado por defecto (Si no ha iniciado sesión): Muestra Registrarse e Iniciar Sesión -->
+            <button onclick="document.getElementById('modal-registro').style.display='flex'" style="background: transparent; border: 1px solid white; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: 0.3s;">Registrarse</button>
+            <button onclick="document.getElementById('modal-login').style.display='flex'" style="background: white; border: none; color: var(--verde-sirena, #006241); padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: 0.3s;">Iniciar Sesión</button>
         </div>
     </header>
 
