@@ -4,57 +4,42 @@
 import { supabase } from './conexion.js';
 
 // ==========================================
-// FUNCIÓN 1: CARGAR EL CATÁLOGO (OPTIMIZADO CON CACHÉ)
+// FUNCIÓN 1: CARGAR EL CATÁLOGO (CON CACHÉ Y ANIMACIÓN)
 // ==========================================
 async function cargarCatalogo() {
     const contenedor = document.getElementById('catalogo-container');
-    
-    // 1. Revisamos si el menú ya está guardado en la memoria rápida del navegador
     const catalogoGuardado = sessionStorage.getItem('catalogoStarbucks');
     
     if (catalogoGuardado) {
-        // Si ya está guardado, lo dibujamos al instante (Carga en 0 segundos)
         renderizarTarjetas(JSON.parse(catalogoGuardado), contenedor);
-        return; // Cortamos la función aquí para no hacer esperar a Supabase
+        return; 
     }
 
     try {
-        // 2. Si no hay caché, mostramos una animación de carga elegante
         contenedor.innerHTML = `
             <div style="text-align: center; width: 100%; padding: 40px;">
                 <div style="border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--verde-sirena); animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                <p style="color: #777; margin-top: 15px; font-weight: bold;">Despertando la base de datos y preparando tu café...</p>
+                <p style="color: #777; margin-top: 15px; font-weight: bold;">Conectando con Supabase y preparando tu café...</p>
                 <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
             </div>
         `;
 
-        // 3. Consultamos a Supabase
-        const { data: productos, error } = await supabase
-            .from('t_producto')
-            .select('*');
-            
+        const { data: productos, error } = await supabase.from('t_producto').select('*');
         if (error) throw error;
         
-        // 4. Guardamos los productos en la memoria rápida para la próxima vez
         sessionStorage.setItem('catalogoStarbucks', JSON.stringify(productos));
-        
-        // 5. Dibujamos las tarjetas
         renderizarTarjetas(productos, contenedor);
         
     } catch (error) {
         console.error("Error al cargar productos:", error);
-        contenedor.innerHTML = '<p style="color: red; text-align: center; width: 100%;">Error al conectar con la base de datos. Por favor recarga la página.</p>';
+        contenedor.innerHTML = '<p style="color: red; text-align: center; width: 100%;">Error al conectar con la base de datos.</p>';
     }
 }
 
-// ==========================================
-// FUNCIÓN AUXILIAR: DIBUJAR LAS TARJETAS HTML
-// ==========================================
 function renderizarTarjetas(productos, contenedor) {
     contenedor.innerHTML = ''; 
-    
     if (productos.length === 0) {
-        contenedor.innerHTML = '<p style="color: var(--cafe-oscuro); text-align: center; width: 100%;">No hay productos disponibles en este momento.</p>';
+        contenedor.innerHTML = '<p style="color: var(--cafe-oscuro); text-align: center; width: 100%;">No hay productos disponibles.</p>';
         return;
     }
     
@@ -79,7 +64,7 @@ function renderizarTarjetas(productos, contenedor) {
 }
 
 // ==========================================
-// FUNCIÓN 2: REGISTRAR UN NUEVO CLIENTE
+// FUNCIÓN 2: REGISTRAR UN NUEVO CLIENTE (Guarda ID)
 // ==========================================
 async function registrarCliente(event) {
     event.preventDefault(); 
@@ -96,27 +81,14 @@ async function registrarCliente(event) {
     try {
         const { data, error } = await supabase
             .from('t_cliente') 
-            .insert([
-                { 
-                    nombre_completo: nombre, 
-                    apellido_paterno: apaterno,
-                    apellido_materno: amaterno,
-                    telefono: telefono,
-                    dni: dni,
-                    ruc: ruc,
-                    correo: correo,
-                    contrasena: contrasena
-                }
-            ])
-            .select(); // <--- ESTO ES NUEVO: Pide que devuelva los datos creados
+            .insert([{ nombre_completo: nombre, apellido_paterno: apaterno, apellido_materno: amaterno, telefono: telefono, dni: dni, ruc: ruc, correo: correo, contrasena: contrasena }])
+            .select(); 
             
         if (error) throw error;
         
-        const nuevoCliente = data[0]; // Obtenemos el registro recién creado
-        
-        // --- GUARDAR SESIÓN CON ID INCLUIDO ---
+        const nuevoCliente = data[0]; 
         localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
-            id_cliente: nuevoCliente.id_cliente, // Guardamos la llave foránea
+            id_cliente: nuevoCliente.id_cliente, 
             nombre: nombre, 
             ruc: ruc,
             correo: correo
@@ -126,7 +98,6 @@ async function registrarCliente(event) {
         alert('¡Cuenta creada exitosamente! Bienvenido a Starbucks Rewards.');
         document.getElementById('modal-registro').style.display = 'none';
         document.getElementById('form-registro').reset(); 
-        
     } catch (error) {
         console.error("Error al registrar:", error);
         alert('Hubo un error al crear la cuenta. Verifica que el correo no esté repetido.');
@@ -134,7 +105,7 @@ async function registrarCliente(event) {
 }
 
 // ==========================================
-// FUNCIÓN 3: ACTUALIZAR EL HEADER (BIENVENIDA + CARRITO)
+// FUNCIÓN 3: ACTUALIZAR EL HEADER
 // ==========================================
 function actualizarHeader() {
     const contenedorUsuario = document.getElementById('menu-usuario');
@@ -142,18 +113,10 @@ function actualizarHeader() {
 
     if (usuarioGuardado && contenedorUsuario) {
         const primerNombre = usuarioGuardado.nombre.split(' ')[0];
-        
-        // Agregamos el botón del carrito al menú superior
         contenedorUsuario.innerHTML = `
-            <span style="color: var(--blanco); font-weight: bold; margin-right: 15px; font-size: 1.1rem;">
-                Bienvenido, ${primerNombre}
-            </span>
-            <button onclick="abrirCarrito()" style="background: var(--verde-menta); color: var(--verde-sirena); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-right: 10px;">
-                🛒 Carrito
-            </button>
-            <button onclick="cerrarSesion()" style="background: transparent; border: 1px solid var(--blanco); color: var(--blanco); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold;">
-                Salir
-            </button>
+            <span style="color: var(--blanco); font-weight: bold; margin-right: 15px; font-size: 1.1rem;">Bienvenido, ${primerNombre}</span>
+            <button onclick="abrirCarrito()" style="background: var(--verde-menta); color: var(--verde-sirena); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-right: 10px;">🛒 Carrito</button>
+            <button onclick="cerrarSesion()" style="background: transparent; border: 1px solid var(--blanco); color: var(--blanco); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold;">Salir</button>
         `;
     }
 }
@@ -163,47 +126,35 @@ function actualizarHeader() {
 // ==========================================
 window.cerrarSesion = function() {
     localStorage.removeItem('usuarioStarbucks'); 
-    localStorage.removeItem('carritoStarbucks'); // Vaciamos el carrito al salir
+    localStorage.removeItem('carritoStarbucks'); 
     location.reload(); 
 }
 
 // ==========================================
-// FUNCIÓN 5: INICIAR SESIÓN
+// FUNCIÓN 5: INICIAR SESIÓN (Guarda ID)
 // ==========================================
 async function iniciarSesion(event) {
     event.preventDefault();
-    
     const correo = document.getElementById('login-correo').value;
     const contrasena = document.getElementById('login-password').value;
     
     try {
-        const { data: cliente, error } = await supabase
-            .from('t_cliente')
-            .select('*')
-            .eq('correo', correo)
-            .eq('contrasena', contrasena)
-            .single(); 
-            
+        const { data: cliente, error } = await supabase.from('t_cliente').select('*').eq('correo', correo).eq('contrasena', contrasena).single(); 
         if (error) throw error;
         
         if (cliente) {
-            // --- GUARDAR SESIÓN CON ID INCLUIDO ---
             localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
-                id_cliente: cliente.id_cliente, // Guardamos la llave foránea
+                id_cliente: cliente.id_cliente, 
                 nombre: cliente.nombre_completo, 
                 ruc: cliente.ruc,
                 correo: cliente.correo
             }));
-            
             actualizarHeader(); 
-            
             const primerNombre = cliente.nombre_completo.split(' ')[0];
             alert(`¡Qué bueno verte de nuevo, ${primerNombre}!`);
-            
             document.getElementById('modal-login').style.display = 'none';
             document.getElementById('form-login').reset();
         }
-        
     } catch (error) {
         console.error("Error al iniciar sesión:", error);
         alert('Correo o contraseña incorrectos. Por favor, intenta de nuevo.');
@@ -211,13 +162,10 @@ async function iniciarSesion(event) {
 }
 
 // ==========================================
-// FUNCIÓN 6: SISTEMA DEL CARRITO (NUEVO)
+// FUNCIÓN 6: SISTEMA DEL CARRITO
 // ==========================================
-
-// 6.1 Agregar un producto a la memoria
 window.agregarAlCarrito = function(nombreProducto, precio) {
     const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioStarbucks'));
-
     if (!usuarioGuardado) {
         alert(`¡Hola! Para pedir un ${nombreProducto}, por favor inicia sesión o regístrate primero.`);
         document.getElementById('modal-login').style.display = 'flex';
@@ -225,26 +173,19 @@ window.agregarAlCarrito = function(nombreProducto, precio) {
     }
 
     let carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
-    
-    // Verificamos si ya existe para sumar cantidad
     const indice = carrito.findIndex(item => item.nombre === nombreProducto);
-    if(indice !== -1) {
-        carrito[indice].cantidad += 1;
-    } else {
-        carrito.push({ nombre: nombreProducto, precio: precio, cantidad: 1 });
-    }
+    if(indice !== -1) carrito[indice].cantidad += 1;
+    else carrito.push({ nombre: nombreProducto, precio: precio, cantidad: 1 });
 
     localStorage.setItem('carritoStarbucks', JSON.stringify(carrito));
-    renderizarCarrito(); // Actualizamos la vista
-    abrirCarrito(); // Desplegamos el menú lateral automáticamente
+    renderizarCarrito(); 
+    abrirCarrito(); 
 }
 
-// 6.2 Dibujar los productos en el panel lateral
 window.renderizarCarrito = function() {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     const contenedor = document.getElementById('items-carrito');
     const totalElemento = document.getElementById('total-carrito');
-    
     contenedor.innerHTML = '';
     let total = 0;
 
@@ -255,14 +196,8 @@ window.renderizarCarrito = function() {
             total += item.precio * item.cantidad;
             contenedor.innerHTML += `
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                    <div>
-                        <h4 style="color: var(--verde-sirena); margin: 0 0 5px 0; font-size: 1.1rem;">${item.nombre}</h4>
-                        <span style="color: #777; font-size: 0.9rem;">S/ ${item.precio.toFixed(2)} x ${item.cantidad}</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <span style="font-weight: bold; font-size: 1.1rem;">S/ ${(item.precio * item.cantidad).toFixed(2)}</span>
-                        <button onclick="eliminarDelCarrito(${index})" style="background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-weight: bold;">X</button>
-                    </div>
+                    <div><h4 style="color: var(--verde-sirena); margin: 0 0 5px 0; font-size: 1.1rem;">${item.nombre}</h4><span style="color: #777; font-size: 0.9rem;">S/ ${item.precio.toFixed(2)} x ${item.cantidad}</span></div>
+                    <div style="display: flex; align-items: center; gap: 15px;"><span style="font-weight: bold; font-size: 1.1rem;">S/ ${(item.precio * item.cantidad).toFixed(2)}</span><button onclick="eliminarDelCarrito(${index})" style="background: #ff4d4d; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-weight: bold;">X</button></div>
                 </div>
             `;
         });
@@ -270,7 +205,6 @@ window.renderizarCarrito = function() {
     totalElemento.innerText = `S/ ${total.toFixed(2)}`;
 }
 
-// 6.3 Eliminar un producto
 window.eliminarDelCarrito = function(index) {
     let carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     carrito.splice(index, 1);
@@ -278,27 +212,21 @@ window.eliminarDelCarrito = function(index) {
     renderizarCarrito();
 }
 
-// 6.4 Efectos visuales de abrir y cerrar
 window.abrirCarrito = function() {
     document.getElementById('panel-carrito').style.display = 'flex';
     document.getElementById('overlay-carrito').style.display = 'block';
     renderizarCarrito();
-    // Truco para que la animación fluya
-    setTimeout(() => {
-        document.getElementById('panel-carrito').style.right = '0';
-    }, 10);
+    setTimeout(() => { document.getElementById('panel-carrito').style.right = '0'; }, 10);
 }
 
 window.cerrarCarrito = function() {
     document.getElementById('panel-carrito').style.right = '-400px';
     document.getElementById('overlay-carrito').style.display = 'none';
-    setTimeout(() => {
-        document.getElementById('panel-carrito').style.display = 'none';
-    }, 300);
+    setTimeout(() => { document.getElementById('panel-carrito').style.display = 'none'; }, 300);
 }
 
 // ==========================================
-// FUNCIÓN 7: PROCESAR LA COMPRA (ABRIR MODAL DE PAGO)
+// FUNCIÓN 7: ABRIR MODAL DE PAGOS
 // ==========================================
 window.procesarCompra = function() {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
@@ -306,34 +234,29 @@ window.procesarCompra = function() {
         alert("Agrega al menos un producto para confirmar tu pedido.");
         return;
     }
-    // Abrimos la pasarela de pagos
     document.getElementById('modal-pago').style.display = 'flex';
 }
 
 // ==========================================
-// FUNCIÓN 8: FINALIZAR PEDIDO EN SUPABASE
+// FUNCIÓN 8: FINALIZAR PEDIDO EN SUPABASE (VENTA REAL)
 // ==========================================
 window.finalizarPedido = async function(metodoPago) {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     const usuario = JSON.parse(localStorage.getItem('usuarioStarbucks'));
     
-    // Validamos que la sesión no esté corrupta
     if (!usuario.id_cliente) {
         alert("Tu sesión está desactualizada. Por favor, cierra sesión y vuelve a ingresar para comprar.");
         return;
     }
 
     try {
-        // 1. Calculamos el total
         let totalVenta = 0;
         carrito.forEach(item => totalVenta += (item.precio * item.cantidad));
 
-        // 2. Mapeamos tu tabla t_forma_pago (Tus códigos de DataCraft)
-        let idFormaPago = 4; // Efectivo por defecto
+        let idFormaPago = 4; // 4 = Efectivo
         if (metodoPago === 'Yape' || metodoPago === 'Plin') idFormaPago = 1;
         else if (metodoPago === 'Tarjeta') idFormaPago = 2; 
 
-        // 3. Mapeamos tu tabla t_comprobante_pago
         let idComprobante = 1; // 1 = Boleta
         let textoComprobante = "BOLETA ELECTRÓNICA";
         if (usuario.ruc && usuario.ruc.trim() !== "" && usuario.ruc !== "EMPTY") {
@@ -341,23 +264,13 @@ window.finalizarPedido = async function(metodoPago) {
             textoComprobante = "FACTURA ELECTRÓNICA";
         }
 
-        // 4. INSERTAR LA VENTA OFICIAL EN SUPABASE
+        // Insertar en tu tabla t_ventas
         const { data: venta, error: errorVenta } = await supabase
             .from('t_ventas')
-            .insert([
-                {
-                    id_cliente: usuario.id_cliente,
-                    id_forma_pago: idFormaPago,
-                    id_comprobante: idComprobante,
-                    subtotal: totalVenta,
-                    total: totalVenta,
-                    estado_orden: 'Recibido' 
-                }
-            ]);
+            .insert([{ id_cliente: usuario.id_cliente, id_forma_pago: idFormaPago, id_comprobante: idComprobante, subtotal: totalVenta, total: totalVenta, estado_orden: 'Recibido' }]);
 
         if (errorVenta) throw errorVenta;
 
-        // 5. Mostrar éxito al cliente y limpiar todo
         alert(`¡Venta registrada oficialmente en base de datos!\n\nPagaste con ${metodoPago} y tu ${textoComprobante} ha sido generada por un total de S/ ${totalVenta.toFixed(2)}.`);
         
         document.getElementById('modal-pago').style.display = 'none';
@@ -367,6 +280,20 @@ window.finalizarPedido = async function(metodoPago) {
 
     } catch (error) {
         console.error("Error crítico al procesar venta en Supabase:", error);
-        alert("Lo sentimos, hubo un problema de conexión al procesar tu pedido. Intenta nuevamente.");
+        alert("Hubo un problema procesando tu pedido. Intenta nuevamente.");
     }
 }
+
+// ==========================================
+// INICIALIZACIÓN: (¡EL MOTOR DE ARRANQUE!)
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+    cargarCatalogo();
+    actualizarHeader(); 
+    
+    const formRegistro = document.getElementById('form-registro');
+    if(formRegistro) formRegistro.addEventListener('submit', registrarCliente);
+
+    const formLogin = document.getElementById('form-login');
+    if(formLogin) formLogin.addEventListener('submit', iniciarSesion);
+});
