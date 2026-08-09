@@ -368,4 +368,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formLogin = document.getElementById('form-login');
     if(formLogin) formLogin.addEventListener('submit', iniciarSesion);
-});
+}); 
