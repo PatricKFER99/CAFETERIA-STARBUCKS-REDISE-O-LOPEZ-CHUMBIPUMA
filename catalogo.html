@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Starbucks Perú | Menú y Catálogo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; font-family: 'Open Sans', sans-serif; background-color: var(--crema, #f9f6f0); display: flex; flex-direction: column; min-height: 100vh;">
+
+    <!-- BARRA DE NAVEGACIÓN MULTIPÁGINA UNIFICADA -->
+    <header class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; background-color: var(--verde-sirena, #006241); position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); box-sizing: border-box;">
+        <div class="logo-container">
+            <img src="logo.png" alt="Starbucks Logo" class="logo" style="height: 50px;">
+        </div>
+        <nav style="flex-grow: 1; text-align: center;">
+            <ul class="nav-links" style="display: inline-flex; gap: 30px; list-style: none; margin: 0; padding: 0;">
+                <li><a href="index.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif;">Menú / Inicio</a></li>
+                <li><a href="promociones.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif;">Promociones</a></li>
+                <li><a href="catalogo.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; border-bottom: 2px solid #d4e9e2; padding-bottom: 3px;">Catálogo</a></li>
+                <li><a href="contacto.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif;">Contacto</a></li>
+            </ul>
+        </nav>
+        <!-- Contenedor dinámico del usuario y acceso rápido al carrito -->
+        <div id="menu-usuario" style="display: flex; align-items: center; gap: 15px;"></div>
+    </header>
+
+    <!-- CUERPO PRINCIPAL DEL CATÁLOGO -->
+    <main style="padding-top: 140px; flex-grow: 1; padding-bottom: 60px;">
+        <h1 class="section-title" style="text-align: center; color: var(--verde-sirena, #006241); font-family: 'Montserrat', sans-serif; font-size: 2.5rem; margin-bottom: 40px;">Nuestro Menú Completo</h1>
+        
+        <!-- CONTENEDOR INTELIGENTE: Aquí el app.js inyectará automáticamente los productos desde Supabase -->
+        <div id="catalogo-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 0 5%; max-width: 1300px; margin: 0 auto;">
+            <!-- Indicador de carga inicial por defecto -->
+            <div style="text-align: center; width: 100%; padding: 40px;">
+                <p style="color: #777; font-weight: bold;">Cargando productos desde Supabase...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========================================== -->
+    <!-- MODALES Y PANEL LATERAL DEL CARRITO        -->
+    <!-- ========================================== -->
+    
+    <!-- OVERLAY OSCURO -->
+    <div id="overlay-carrito" onclick="cerrarCarrito()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 998;"></div>
+    
+    <!-- PANEL LATERAL DE COMPRA -->
+    <div id="panel-carrito" style="display: none; position: fixed; top: 0; right: -400px; width: 350px; height: 100%; background: white; z-index: 999; box-shadow: -5px 0 15px rgba(0,0,0,0.2); transition: right 0.3s ease; flex-direction: column; padding: 20px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--verde-sirena, #006241); padding-bottom: 10px; margin-bottom: 20px;">
+            <h2 style="color: var(--verde-sirena, #006241); margin: 0; font-family: 'Montserrat', sans-serif;">Tu Pedido</h2>
+            <button onclick="cerrarCarrito()" style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: #555;">&times;</button>
+        </div>
+        <div id="items-carrito" style="flex-grow: 1; overflow-y: auto;"></div>
+        <div style="border-top: 2px solid #eee; padding-top: 20px; margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; color: #333;">
+                <span>Total:</span>
+                <span id="total-carrito">S/ 0.00</span>
+            </div>
+            <button onclick="procesarCompra()" style="width: 100%; background: var(--verde-sirena, #006241); color: white; border: none; padding: 15px; border-radius: 25px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s;">Procesar Pago</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE PAGO Y SELECCIÓN DE DISTRITO / ENVÍO -->
+    <div id="modal-pago" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); box-sizing: border-box;">
+            <h2 style="color: var(--verde-sirena, #006241); margin-top: 0; margin-bottom: 20px; text-align: center; font-family: 'Montserrat', sans-serif;">Completa tu Envío y Pago</h2>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #444;">Selecciona tu Distrito:</label>
+                <select id="select-distrito" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+                    <option value="">Cargando distritos...</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #444;">Dirección Exacta:</label>
+                <input type="text" id="input-direccion" placeholder="Ej. Av. Larco 123, Miraflores" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+            </div>
+            <p style="font-weight: bold; margin-bottom: 15px; text-align: center; color: #444;">Elige tu método de pago:</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <button onclick="finalizarPedido('Yape')" style="background: #7415b9; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Pagar con Yape / Plin</button>
+                <button onclick="finalizarPedido('Tarjeta')" style="background: var(--verde-sirena, #006241); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Tarjeta de Crédito / Débito</button>
+                <button onclick="finalizarPedido('Efectivo')" style="background: #555; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">Efectivo contra entrega</button>
+            </div>
+            <button onclick="document.getElementById('modal-pago').style.display='none'" style="width: 100%; background: #ccc; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; color: #333;">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- PIE DE PÁGINA OFICIAL -->
+    <footer style="background-color: var(--cafe-oscuro, #2c1d11); color: white; text-align: center; padding: 25px; margin-top: auto;">
+        <p style="margin: 0; font-size: 0.95rem;">&copy; 2026 Starbucks Coffee Company. Rediseño Académico - Hecho por Patrick Fernando Lopez Meza & Luis Chumbipuma.</p>
+    </footer>
+
+    <!-- MOTOR CENTRAL JAVASCRIPT (MODULAR) -->
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>
