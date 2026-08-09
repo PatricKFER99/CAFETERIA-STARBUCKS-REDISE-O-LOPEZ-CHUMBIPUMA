@@ -404,3 +404,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const formLogin = document.getElementById('form-login');
     if(formLogin) formLogin.addEventListener('submit', iniciarSesion);
 });
+// ==========================================
+// FUNCIÓN DE CONTACTO Y SOPORTE
+// ==========================================
+window.enviarContacto = async function(event) {
+    event.preventDefault();
+    const nombre = document.getElementById('contacto-nombre').value.trim();
+    const correo = document.getElementById('contacto-correo').value.trim();
+    const mensaje = document.getElementById('contacto-mensaje').value.trim();
+
+    if (!nombre || !correo || !mensaje) {
+        alert("Por favor completa todos los campos del formulario.");
+        return;
+    }
+
+    try {
+        const { error } = await supabase
+            .from('t_contacto')
+            .insert([{ nombre, correo, mensaje }]);
+
+        if (error) throw error;
+
+        alert('¡Mensaje enviado con éxito! Se ha guardado en el sistema y nos comunicaremos contigo pronto.');
+        document.getElementById('form-contacto').reset();
+    } catch (error) {
+        console.error("Error al registrar contacto:", error);
+        alert('Hubo un error al enviar el mensaje. Inténtalo nuevamente.');
+    }
+}

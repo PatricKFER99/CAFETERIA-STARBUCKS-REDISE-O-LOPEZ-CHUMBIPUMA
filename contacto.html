@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Starbucks Perú | Contacto y Soporte</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; font-family: 'Open Sans', sans-serif; background-color: var(--crema, #f9f6f0); display: flex; flex-direction: column; min-height: 100vh;">
+
+    <!-- BARRA DE NAVEGACIÓN MULTIPÁGINA UNIFICADA -->
+    <header class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 5%; background-color: var(--verde-sirena, #006241); position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); box-sizing: border-box;">
+        <div class="logo-container">
+            <img src="logo.png" alt="Starbucks Logo" class="logo" style="height: 50px;">
+        </div>
+        <nav style="flex-grow: 1; text-align: center;">
+            <ul class="nav-links" style="display: inline-flex; gap: 30px; list-style: none; margin: 0; padding: 0;">
+                <li><a href="index.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif;">Menú / Inicio</a></li>
+                <li><a href="promociones.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif;">Promociones</a></li>
+                <li><a href="catalogo.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif;">Catálogo</a></li>
+                <li><a href="contacto.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; border-bottom: 2px solid #d4e9e2; padding-bottom: 3px;">Contacto</a></li>
+            </ul>
+        </nav>
+        <div id="menu-usuario" style="display: flex; align-items: center; gap: 15px;"></div>
+    </header>
+
+    <!-- CUERPO PRINCIPAL DE CONTACTO -->
+    <main style="padding-top: 140px; flex-grow: 1; padding-bottom: 60px; display: flex; flex-direction: column; align-items: center;">
+        <h1 class="section-title" style="text-align: center; color: var(--verde-sirena, #006241); font-family: 'Montserrat', sans-serif; font-size: 2.5rem; margin-bottom: 20px;">Centro de Atención al Cliente</h1>
+        <p style="color: #666; text-align: center; margin-bottom: 40px; font-size: 1.1rem;">¿Tienes dudas con tu pedido o requieres asistencia personalizada? Estamos para ayudarte.</p>
+
+        <!-- CONTENEDOR DE DOS COLUMNAS (Formulario + Botón Directo Admin) -->
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; width: 90%; max-width: 1000px;">
+            
+            <!-- TARJETA 1: FORMULARIO DE MENSAJES -->
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); flex: 1; min-width: 300px; box-sizing: border-box;">
+                <h3 style="color: var(--verde-sirena, #006241); margin-top: 0; font-family: 'Montserrat', sans-serif; margin-bottom: 20px;">Envíanos un mensaje</h3>
+                <form id="form-contacto" onsubmit="enviarContacto(event)">
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #444;">Tu Nombre:</label>
+        <input type="text" id="contacto-nombre" placeholder="Ej. Carlos Ruiz" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+    </div>
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #444;">Correo Electrónico:</label>
+        <input type="email" id="contacto-correo" placeholder="correo@ejemplo.com" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;">
+    </div>
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 5px; color: #444;">Mensaje:</label>
+        <textarea id="contacto-mensaje" rows="4" placeholder="Escribe tu consulta aquí..." required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; resize: none;"></textarea>
+    </div>
+    <button type="submit" class="btn-primary" style="width: 100%; background: var(--verde-sirena, #006241); color: white; border: none; padding: 12px; border-radius: 25px; font-weight: bold; cursor: pointer; transition: 0.3s;">Enviar Mensaje</button>
+</form>
+            </div>
+
+            <!-- TARJETA 2: ACCESO DIRECTO CON EL ADMINISTRADOR -->
+            <div style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); flex: 1; min-width: 300px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">💬</div>
+                <h3 style="color: var(--verde-sirena, #006241); margin-top: 0; font-family: 'Montserrat', sans-serif; margin-bottom: 10px;">¿Necesitas ayuda inmediata?</h3>
+                <p style="color: #666; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.5;">Comunícate en tiempo real de forma directa con la administración general de nuestro sistema para resolver cualquier inconveniente urgente.</p>
+                
+                <!-- BOTÓN DIRECTO WHATSAPP ADMINISTRADOR -->
+                <a href="https://wa.me/51949187927?text=Hola,%20necesito%20soporte%20directo%20con%20el%20administrador%20de%20Starbucks" target="_blank" style="display: inline-block; background-color: #25d366; color: white; text-decoration: none; padding: 15px 25px; border-radius: 30px; font-weight: bold; font-family: 'Montserrat', sans-serif; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); transition: 0.3s; width: 100%; box-sizing: border-box;">
+                    📲 Contactar con Administrador
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- PIE DE PÁGINA OFICIAL -->
+    <footer style="background-color: var(--cafe-oscuro, #2c1d11); color: white; text-align: center; padding: 25px; margin-top: auto;">
+        <p style="margin: 0; font-size: 0.95rem;">&copy; 2026 Starbucks Coffee Company. Rediseño Académico - Hecho por Patrick Fernando Lopez Meza & Luis Chumbipuma.</p>
+    </footer>
+
+    <!-- MOTOR CENTRAL JAVASCRIPT (MODULAR) -->
+    <script type="module" src="app.js"></script>
+
+</body>
+</html>
