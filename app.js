@@ -65,7 +65,7 @@ async function registrarCliente(event) {
     
     try {
         const { data, error } = await supabase
-            .from('t_cliente') // Tabla en minúsculas
+            .from('t_cliente') 
             .insert([
                 { 
                     nombre_completo: nombre, 
@@ -77,17 +77,21 @@ async function registrarCliente(event) {
                     correo: correo,
                     contrasena: contrasena
                 }
-            ]);
+            ])
+            .select(); // <--- ESTO ES NUEVO: Pide que devuelva los datos creados
             
         if (error) throw error;
         
-        // --- GUARDAR SESIÓN EN EL NAVEGADOR ---
+        const nuevoCliente = data[0]; // Obtenemos el registro recién creado
+        
+        // --- GUARDAR SESIÓN CON ID INCLUIDO ---
         localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
+            id_cliente: nuevoCliente.id_cliente, // Guardamos la llave foránea
             nombre: nombre, 
             ruc: ruc,
             correo: correo
         }));
-        actualizarHeader(); // Cambia los botones por el saludo
+        actualizarHeader(); 
         
         alert('¡Cuenta creada exitosamente! Bienvenido a Starbucks Rewards.');
         document.getElementById('modal-registro').style.display = 'none';
@@ -138,6 +142,7 @@ window.cerrarSesion = function() {
 // ==========================================
 async function iniciarSesion(event) {
     event.preventDefault();
+    
     const correo = document.getElementById('login-correo').value;
     const contrasena = document.getElementById('login-password').value;
     
@@ -152,7 +157,9 @@ async function iniciarSesion(event) {
         if (error) throw error;
         
         if (cliente) {
+            // --- GUARDAR SESIÓN CON ID INCLUIDO ---
             localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
+                id_cliente: cliente.id_cliente, // Guardamos la llave foránea
                 nombre: cliente.nombre_completo, 
                 ruc: cliente.ruc,
                 correo: cliente.correo
@@ -166,6 +173,7 @@ async function iniciarSesion(event) {
             document.getElementById('modal-login').style.display = 'none';
             document.getElementById('form-login').reset();
         }
+        
     } catch (error) {
         console.error("Error al iniciar sesión:", error);
         alert('Correo o contraseña incorrectos. Por favor, intenta de nuevo.');
@@ -273,36 +281,62 @@ window.procesarCompra = function() {
 }
 
 // ==========================================
-// FUNCIÓN 8: FINALIZAR PEDIDO (PREPARAR DATOS PARA BD)
+// FUNCIÓN 8: FINALIZAR PEDIDO EN SUPABASE
 // ==========================================
 window.finalizarPedido = async function(metodoPago) {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     const usuario = JSON.parse(localStorage.getItem('usuarioStarbucks'));
     
-    // 1. Calculamos el total
-    let totalVenta = 0;
-    carrito.forEach(item => totalVenta += (item.precio * item.cantidad));
-
-    // 2. Aplicamos regla de negocio: Factura o Boleta
-    let tipoComprobante = "BOLETA";
-    if (usuario.ruc && usuario.ruc.trim() !== "" && usuario.ruc !== "EMPTY") {
-        tipoComprobante = "FACTURA";
+    // Validamos que la sesión no esté corrupta
+    if (!usuario.id_cliente) {
+        alert("Tu sesión está desactualizada. Por favor, cierra sesión y vuelve a ingresar para comprar.");
+        return;
     }
 
-    // 3. AQUÍ HAREMOS EL INSERT A SUPABASE LUEGO (t_ventas y t_detalle_venta)
-    // Por ahora validamos que toda la data esté lista para enviarse
-    console.log(">> LISTO PARA INSERTAR EN SUPABASE:");
-    console.log("Comprobante:", tipoComprobante);
-    console.log("Método Pago:", metodoPago);
-    console.log("Total:", totalVenta);
-    console.log("Productos:", carrito);
+    try {
+        // 1. Calculamos el total
+        let totalVenta = 0;
+        carrito.forEach(item => totalVenta += (item.precio * item.cantidad));
 
-    // 4. Mensaje visual de éxito para el cliente
-    alert(`¡Pago con ${metodoPago} procesado exitosamente!\n\nTu ${tipoComprobante} ha sido generada por un total de S/ ${totalVenta.toFixed(2)}.\n\n¡Gracias por tu compra, ${usuario.nombre.split(' ')[0]}!`);
-    
-    // 5. Limpiamos la pantalla y el carrito
-    document.getElementById('modal-pago').style.display = 'none';
-    localStorage.removeItem('carritoStarbucks');
-    renderizarCarrito();
-    cerrarCarrito();
+        // 2. Mapeamos tu tabla t_forma_pago (Tus códigos de DataCraft)
+        let idFormaPago = 4; // Efectivo por defecto
+        if (metodoPago === 'Yape' || metodoPago === 'Plin') idFormaPago = 1;
+        else if (metodoPago === 'Tarjeta') idFormaPago = 2; 
+
+        // 3. Mapeamos tu tabla t_comprobante_pago
+        let idComprobante = 1; // 1 = Boleta
+        let textoComprobante = "BOLETA ELECTRÓNICA";
+        if (usuario.ruc && usuario.ruc.trim() !== "" && usuario.ruc !== "EMPTY") {
+            idComprobante = 2; // 2 = Factura
+            textoComprobante = "FACTURA ELECTRÓNICA";
+        }
+
+        // 4. INSERTAR LA VENTA OFICIAL EN SUPABASE
+        const { data: venta, error: errorVenta } = await supabase
+            .from('t_ventas')
+            .insert([
+                {
+                    id_cliente: usuario.id_cliente,
+                    id_forma_pago: idFormaPago,
+                    id_comprobante: idComprobante,
+                    subtotal: totalVenta,
+                    total: totalVenta,
+                    estado_orden: 'Recibido' 
+                }
+            ]);
+
+        if (errorVenta) throw errorVenta;
+
+        // 5. Mostrar éxito al cliente y limpiar todo
+        alert(`¡Venta registrada oficialmente en base de datos!\n\nPagaste con ${metodoPago} y tu ${textoComprobante} ha sido generada por un total de S/ ${totalVenta.toFixed(2)}.`);
+        
+        document.getElementById('modal-pago').style.display = 'none';
+        localStorage.removeItem('carritoStarbucks');
+        renderizarCarrito();
+        cerrarCarrito();
+
+    } catch (error) {
+        console.error("Error crítico al procesar venta en Supabase:", error);
+        alert("Lo sentimos, hubo un problema de conexión al procesar tu pedido. Intenta nuevamente.");
+    }
 }
