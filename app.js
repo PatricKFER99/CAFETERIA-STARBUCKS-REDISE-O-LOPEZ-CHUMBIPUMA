@@ -35,7 +35,7 @@ async function cargarCatalogo() {
                         <h3 style="color: var(--verde-sirena); margin-bottom: 10px;">${prod.nombre}</h3>
                         <p style="color: #555; margin-bottom: 15px; font-size: 0.9rem; flex-grow: 1;">${prod.descripcion}</p>
                         <span style="display: block; font-weight: bold; font-size: 1.3rem; color: var(--cafe-oscuro); margin-bottom: 15px;">S/ ${prod.precio.toFixed(2)}</span>
-                        <button class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px;">Agregar al pedido</button>
+                        <button onclick="agregarAlCarrito('${prod.nombre}', ${prod.precio})" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px;">Agregar al pedido</button>
                     </div>
                 </div>
             `;
@@ -131,7 +131,7 @@ window.cerrarSesion = function() {
 }
 
 // ==========================================
-// FUNCIÓN 5: INICIAR SESIÓN (NUEVO)
+// FUNCIÓN 5: INICIAR SESIÓN
 // ==========================================
 async function iniciarSesion(event) {
     event.preventDefault();
@@ -176,6 +176,25 @@ async function iniciarSesion(event) {
 }
 
 // ==========================================
+// FUNCIÓN 6: AGREGAR AL CARRITO (CANDADO DE SEGURIDAD)
+// ==========================================
+window.agregarAlCarrito = function(nombreProducto, precio) {
+    // 1. Verificamos si hay un usuario en la memoria
+    const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioStarbucks'));
+
+    // 2. Si NO hay usuario, bloqueamos y pedimos login
+    if (!usuarioGuardado) {
+        alert(`¡Hola! Para agregar un ${nombreProducto} a tu pedido, por favor inicia sesión o regístrate primero.`);
+        document.getElementById('modal-login').style.display = 'flex';
+        return; 
+    }
+
+    // 3. Si SÍ hay usuario, le permitimos avanzar
+    const primerNombre = usuarioGuardado.nombre.split(' ')[0];
+    alert(`¡Excelente elección, ${primerNombre}! Se agregó ${nombreProducto} (S/ ${precio.toFixed(2)}) a tu cuenta.`);
+}
+
+// ==========================================
 // INICIALIZACIÓN: Ejecutar al cargar la página
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -188,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formRegistro.addEventListener('submit', registrarCliente);
     }
 
-    // Escuchar el evento de Iniciar Sesión (NUEVO)
+    // Escuchar el evento de Iniciar Sesión
     const formLogin = document.getElementById('form-login');
     if(formLogin) {
         formLogin.addEventListener('submit', iniciarSesion);
