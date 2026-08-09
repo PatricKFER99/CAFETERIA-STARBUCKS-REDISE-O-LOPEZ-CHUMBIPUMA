@@ -8,6 +8,10 @@ import { supabase } from './conexion.js';
 // ==========================================
 async function cargarCatalogo() {
     const contenedor = document.getElementById('catalogo-container');
+    
+    // SEGURO MULTIPÁGINA: Si no estamos en la página del catálogo, detenemos la función aquí para que no haya errores.
+    if (!contenedor) return; 
+
     const catalogoGuardado = sessionStorage.getItem('catalogoStarbucks');
     
     if (catalogoGuardado) {
@@ -150,8 +154,9 @@ async function iniciarSesion(event) {
 window.agregarAlCarrito = function(idProducto, nombreProducto, precio) {
     const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioStarbucks'));
     if (!usuarioGuardado) {
-        alert(`Por favor inicia sesión para pedir un ${nombreProducto}.`);
-        document.getElementById('modal-login').style.display = 'flex';
+        alert(`Por favor inicia sesión para pedir: ${nombreProducto}.`);
+        const modalLogin = document.getElementById('modal-login');
+        if(modalLogin) modalLogin.style.display = 'flex';
         return; 
     }
 
@@ -166,9 +171,13 @@ window.agregarAlCarrito = function(idProducto, nombreProducto, precio) {
 }
 
 window.renderizarCarrito = function() {
-    const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     const contenedor = document.getElementById('items-carrito');
     const totalElemento = document.getElementById('total-carrito');
+    
+    // Seguro multipágina por si la vista actual no tiene el modal de carrito
+    if (!contenedor || !totalElemento) return;
+
+    const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     contenedor.innerHTML = '';
     let total = 0;
 
@@ -196,16 +205,24 @@ window.eliminarDelCarrito = function(index) {
 }
 
 window.abrirCarrito = function() {
-    document.getElementById('panel-carrito').style.display = 'flex';
-    document.getElementById('overlay-carrito').style.display = 'block';
-    renderizarCarrito();
-    setTimeout(() => { document.getElementById('panel-carrito').style.right = '0'; }, 10);
+    const panel = document.getElementById('panel-carrito');
+    const overlay = document.getElementById('overlay-carrito');
+    if(panel && overlay) {
+        panel.style.display = 'flex';
+        overlay.style.display = 'block';
+        renderizarCarrito();
+        setTimeout(() => { panel.style.right = '0'; }, 10);
+    }
 }
 
 window.cerrarCarrito = function() {
-    document.getElementById('panel-carrito').style.right = '-400px';
-    document.getElementById('overlay-carrito').style.display = 'none';
-    setTimeout(() => { document.getElementById('panel-carrito').style.display = 'none'; }, 300);
+    const panel = document.getElementById('panel-carrito');
+    const overlay = document.getElementById('overlay-carrito');
+    if(panel && overlay) {
+        panel.style.right = '-400px';
+        overlay.style.display = 'none';
+        setTimeout(() => { panel.style.display = 'none'; }, 300);
+    }
 }
 
 // ==========================================
@@ -219,11 +236,12 @@ window.procesarCompra = async function() {
     }
 
     // Abrimos el modal de pago
-    document.getElementById('modal-pago').style.display = 'flex';
+    const modalPago = document.getElementById('modal-pago');
+    if(modalPago) modalPago.style.display = 'flex';
 
     // Cargamos los distritos en el selector si está vacío
     const selectDistrito = document.getElementById('select-distrito');
-    if (selectDistrito.options.length <= 1) {
+    if (selectDistrito && selectDistrito.options.length <= 1) {
         try {
             const { data: distritos, error } = await supabase
                 .from('t_distrito')
@@ -249,20 +267,20 @@ window.procesarCompra = async function() {
 window.finalizarPedido = async function(metodoPago) {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
     const usuario = JSON.parse(localStorage.getItem('usuarioStarbucks'));
-    const idDistritoSeleccionado = document.getElementById('select-distrito').value;
-    const direccionTexto = document.getElementById('input-direccion').value;
-
-    if (!usuario.id_cliente) {
+    const selectDistrito = document.getElementById('select-distrito');
+    const inputDireccion = document.getElementById('input-direccion');
+    
+    if (!usuario || !usuario.id_cliente) {
         alert("Tu sesión está desactualizada. Vuelve a iniciar sesión.");
         return;
     }
 
-    if (!idDistritoSeleccionado) {
+    if (!selectDistrito || !selectDistrito.value) {
         alert("Por favor selecciona un distrito para el envío.");
         return;
     }
 
-    if (!direccionTexto.trim()) {
+    if (!inputDireccion || !inputDireccion.value.trim()) {
         alert("Por favor escribe tu dirección exacta.");
         return;
     }
@@ -289,7 +307,7 @@ window.finalizarPedido = async function(metodoPago) {
         let idDiaCalculado = fechaHoy.getDay(); // 1 a 6 (Lunes a Sábado), 0 es Domingo
         if (idDiaCalculado === 0) idDiaCalculado = 7; // Convertimos el 0 del Domingo al ID 7
 
-        // --- 1. INSERTAR CABECERA (Ahora amarrada a la tabla de Tiempo) ---
+        // --- 1. INSERTAR CABECERA ---
         const { data: ventaNueva, error: errorVenta } = await supabase
             .from('t_ventas')
             .insert([{ 
@@ -299,8 +317,8 @@ window.finalizarPedido = async function(metodoPago) {
                 subtotal: totalVenta, 
                 total: totalVenta, 
                 estado_orden: 'Recibido',
-                id_distrito: parseInt(idDistritoSeleccionado),
-                direccion_envio: direccionTexto,
+                id_distrito: parseInt(selectDistrito.value),
+                direccion_envio: inputDireccion.value.trim(),
                 id_ano: idAnoCalculado,
                 id_mes: idMesCalculado,
                 id_dia: idDiaCalculado
