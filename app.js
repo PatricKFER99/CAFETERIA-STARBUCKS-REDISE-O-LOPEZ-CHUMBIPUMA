@@ -4,16 +4,13 @@
 import { supabase } from './conexion.js';
 
 // ==========================================
-// FUNCIÓN 1: CARGAR EL CATÁLOGO (CON CACHÉ)
+// FUNCIÓN 1: CARGAR EL CATÁLOGO (EXCLUSIVO 15 PRODUCTOS)
 // ==========================================
 async function cargarCatalogo() {
     const contenedor = document.getElementById('catalogo-container');
-    
-    // SEGURO MULTIPÁGINA: Si no estamos en la página del catálogo, detenemos la función aquí para que no haya errores.
     if (!contenedor) return; 
 
-    const catalogoGuardado = sessionStorage.getItem('catalogoStarbucks');
-    
+    const catalogoGuardado = sessionStorage.getItem('catalogoStarbucks15');
     if (catalogoGuardado) {
         renderizarTarjetas(JSON.parse(catalogoGuardado), contenedor);
         return; 
@@ -23,15 +20,20 @@ async function cargarCatalogo() {
         contenedor.innerHTML = `
             <div style="text-align: center; width: 100%; padding: 40px;">
                 <div style="border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--verde-sirena); animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                <p style="color: #777; margin-top: 15px; font-weight: bold;">Conectando con Supabase...</p>
+                <p style="color: #777; margin-top: 15px; font-weight: bold;">Cargando menú completo...</p>
                 <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
             </div>
         `;
 
-        const { data: productos, error } = await supabase.from('t_producto').select('*');
+        // FILTRUM CRUCIAL: Solo traemos cafés (1), postres (2) y jugos (3), fuera las promos
+        const { data: productos, error } = await supabase
+            .from('t_producto')
+            .select('*')
+            .in('id_catalogo', [1, 2, 3]);
+
         if (error) throw error;
         
-        sessionStorage.setItem('catalogoStarbucks', JSON.stringify(productos));
+        sessionStorage.setItem('catalogoStarbucks15', JSON.stringify(productos));
         renderizarTarjetas(productos, contenedor);
         
     } catch (error) {
@@ -47,49 +49,46 @@ function renderizarTarjetas(productos, contenedor) {
         return;
     }
     
-    // Contadores para asignar de forma secuencial 1, 2, 3, 4, 5 según tu base de datos
-    let contadorCafe = 1;
-    let contadorPostre = 1;
-    let contadorJugo = 1;
+    // Contadores independientes para mapear exactamente tus 15 archivos de imagen
+    let idxCafe = 1;
+    let idxPostre = 1;
+    let idxJugo = 1;
 
     productos.forEach(prod => {
-        let imgUrl = 'fav-1.jpg';
-        const cat = prod.id_catalogo; // 1 = Café, 2 = Postre, 3 = Jugo
+        let imgUrl = 'americano-alto-cafe1.jpg'; // fallback seguro
+        const cat = prod.id_catalogo; 
 
-        // Mapeo inteligente basado en tus archivos reales de la carpeta
+        // Mapeo milimétrico con tus nombres de archivo reales
         if (cat === 1) {
-            // Cafés: americano-alto-cafe1.jpg hasta cafe5
-            const mappingCafe = {
+            const mapCafes = {
                 1: 'americano-alto-cafe1.jpg',
                 2: 'latte-alto-cafe2.jpg',
                 3: 'latte-macchiato-alto-cafe3.jpg',
                 4: 'black-white-mocha-alto-cafe4.jpg',
                 5: 'caramel-macchiato-alto-cafe5.jpg'
             };
-            imgUrl = mappingCafe[contadorCafe] || 'americano-alto-cafe1.jpg';
-            contadorCafe++;
+            imgUrl = mapCafes[idxCafe] || 'americano-alto-cafe1.jpg';
+            idxCafe++;
         } else if (cat === 2) {
-            // Postres: galleta-rellena...postre1.jpg hasta postre5
-            const mappingPostre = {
+            const mapPostres = {
                 1: 'galleta-rellena-de-crema-de-avellanas-postre1.jpg',
                 2: 'torta-de-chocolate-postre2.jpg',
                 3: 'sandwich-pavita-queso-espinaca-postre3.jpg',
                 4: 'cuchareable-chocolucuma-con-brownie-postre4.jpg',
                 5: 'cuchareable-de-tres-leches-postre5.jpg'
             };
-            imgUrl = mappingPostre[contadorPostre] || 'torta-de-chocolate-postre2.jpg';
-            contadorPostre++;
+            imgUrl = mapPostres[idxPostre] || 'torta-de-chocolate-postre2.jpg';
+            idxPostre++;
         } else if (cat === 3) {
-            // Jugos/Bebidas frías: iced-protein-matcha-jugo1.jpg hasta jugo5
-            const mappingJugo = {
+            const mapJugos = {
                 1: 'iced-protein-matcha-jugo1.jpg',
                 2: 'iced-sugar-free-vanilla-protein-latte-jugo2.jpg',
                 3: 'sugar-free-vanilla-protein-latte-jugo3.jpg',
                 4: 'pink-drink-refresher-alto-jugo4.jpg',
                 5: 'protein-matcha-jugo5.jpg'
             };
-            imgUrl = mappingJugo[contadorJugo] || 'pink-drink-refresher-alto-jugo4.jpg';
-            contadorJugo++;
+            imgUrl = mapJugos[idxJugo] || 'pink-drink-refresher-alto-jugo4.jpg';
+            idxJugo++;
         }
         
         const idDelProducto = prod.id_producto || prod.id;
