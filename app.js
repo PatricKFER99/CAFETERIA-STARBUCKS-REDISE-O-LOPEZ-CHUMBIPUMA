@@ -244,7 +244,7 @@ window.procesarCompra = async function() {
 }
 
 // ==========================================
-// FUNCIÓN 7: FINALIZAR PEDIDO (CON DISTRITO Y DIRECCIÓN)
+// FUNCIÓN 7: FINALIZAR PEDIDO (CON DISTRITO, DIRECCIÓN Y TIEMPO)
 // ==========================================
 window.finalizarPedido = async function(metodoPago) {
     const carrito = JSON.parse(localStorage.getItem('carritoStarbucks')) || [];
@@ -282,7 +282,14 @@ window.finalizarPedido = async function(metodoPago) {
             textoComprobante = "FACTURA ELECTRÓNICA";
         }
 
-        // --- 1. INSERTAR CABECERA (Con Distrito y Dirección) ---
+        // --- LÓGICA DE TIEMPO (Detecta la fecha actual automáticamente) ---
+        const fechaHoy = new Date();
+        const idAnoCalculado = fechaHoy.getFullYear() - 2023; // 2024=1, 2025=2, 2026=3...
+        const idMesCalculado = fechaHoy.getMonth() + 1; // 1 a 12 (Enero a Diciembre)
+        let idDiaCalculado = fechaHoy.getDay(); // 1 a 6 (Lunes a Sábado), 0 es Domingo
+        if (idDiaCalculado === 0) idDiaCalculado = 7; // Convertimos el 0 del Domingo al ID 7
+
+        // --- 1. INSERTAR CABECERA (Ahora amarrada a la tabla de Tiempo) ---
         const { data: ventaNueva, error: errorVenta } = await supabase
             .from('t_ventas')
             .insert([{ 
@@ -293,7 +300,10 @@ window.finalizarPedido = async function(metodoPago) {
                 total: totalVenta, 
                 estado_orden: 'Recibido',
                 id_distrito: parseInt(idDistritoSeleccionado),
-                direccion_envio: direccionTexto
+                direccion_envio: direccionTexto,
+                id_ano: idAnoCalculado,
+                id_mes: idMesCalculado,
+                id_dia: idDiaCalculado
             }])
             .select(); 
 
@@ -315,7 +325,7 @@ window.finalizarPedido = async function(metodoPago) {
 
         if (errorDetalles) throw errorDetalles;
 
-        alert(`¡Pedido y Delivery registrados con éxito!\n\nTu ${textoComprobante} ha sido generada. Enviaremos tu pedido a tu distrito seleccionado.`);
+        alert(`¡Pedido registrado con éxito!\n\nTu ${textoComprobante} ha sido generada. Enviaremos tu pedido a tu distrito seleccionado.`);
         
         document.getElementById('modal-pago').style.display = 'none';
         localStorage.removeItem('carritoStarbucks');
