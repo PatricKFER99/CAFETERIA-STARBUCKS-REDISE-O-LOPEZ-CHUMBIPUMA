@@ -131,14 +131,66 @@ window.cerrarSesion = function() {
 }
 
 // ==========================================
+// FUNCIÓN 5: INICIAR SESIÓN (NUEVO)
+// ==========================================
+async function iniciarSesion(event) {
+    event.preventDefault();
+    
+    const correo = document.getElementById('login-correo').value;
+    const contrasena = document.getElementById('login-password').value;
+    
+    try {
+        // Buscamos en la BD si existe el cliente con ese correo y contraseña
+        const { data: cliente, error } = await supabase
+            .from('t_cliente')
+            .select('*')
+            .eq('correo', correo)
+            .eq('contrasena', contrasena)
+            .single(); // Trae un solo registro exacto
+            
+        if (error) throw error;
+        
+        if (cliente) {
+            // Guardamos la sesión en el navegador
+            localStorage.setItem('usuarioStarbucks', JSON.stringify({ 
+                nombre: cliente.nombre_completo, 
+                ruc: cliente.ruc,
+                correo: cliente.correo
+            }));
+            
+            actualizarHeader(); // Actualizamos la vista
+            
+            // Extraemos solo el primer nombre para saludar
+            const primerNombre = cliente.nombre_completo.split(' ')[0];
+            alert(`¡Qué bueno verte de nuevo, ${primerNombre}!`);
+            
+            // Cerramos y limpiamos el modal
+            document.getElementById('modal-login').style.display = 'none';
+            document.getElementById('form-login').reset();
+        }
+        
+    } catch (error) {
+        console.error("Error al iniciar sesión:", error);
+        alert('Correo o contraseña incorrectos. Por favor, intenta de nuevo.');
+    }
+}
+
+// ==========================================
 // INICIALIZACIÓN: Ejecutar al cargar la página
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     cargarCatalogo();
     actualizarHeader(); // Verifica si hay alguien logueado al abrir la página
     
+    // Escuchar el evento de Registro
     const formRegistro = document.getElementById('form-registro');
     if(formRegistro) {
         formRegistro.addEventListener('submit', registrarCliente);
+    }
+
+    // Escuchar el evento de Iniciar Sesión (NUEVO)
+    const formLogin = document.getElementById('form-login');
+    if(formLogin) {
+        formLogin.addEventListener('submit', iniciarSesion);
     }
 });
