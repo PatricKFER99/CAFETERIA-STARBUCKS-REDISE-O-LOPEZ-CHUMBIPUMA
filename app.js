@@ -4,48 +4,78 @@
 import { supabase } from './conexion.js';
 
 // ==========================================
-// FUNCIÓN 1: CARGAR EL CATÁLOGO DINÁMICAMENTE
+// FUNCIÓN 1: CARGAR EL CATÁLOGO (OPTIMIZADO CON CACHÉ)
 // ==========================================
 async function cargarCatalogo() {
     const contenedor = document.getElementById('catalogo-container');
     
+    // 1. Revisamos si el menú ya está guardado en la memoria rápida del navegador
+    const catalogoGuardado = sessionStorage.getItem('catalogoStarbucks');
+    
+    if (catalogoGuardado) {
+        // Si ya está guardado, lo dibujamos al instante (Carga en 0 segundos)
+        renderizarTarjetas(JSON.parse(catalogoGuardado), contenedor);
+        return; // Cortamos la función aquí para no hacer esperar a Supabase
+    }
+
     try {
+        // 2. Si no hay caché, mostramos una animación de carga elegante
+        contenedor.innerHTML = `
+            <div style="text-align: center; width: 100%; padding: 40px;">
+                <div style="border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--verde-sirena); animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                <p style="color: #777; margin-top: 15px; font-weight: bold;">Despertando la base de datos y preparando tu café...</p>
+                <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+            </div>
+        `;
+
+        // 3. Consultamos a Supabase
         const { data: productos, error } = await supabase
-            .from('t_producto') // Tabla en minúsculas
+            .from('t_producto')
             .select('*');
             
         if (error) throw error;
         
-        contenedor.innerHTML = ''; 
+        // 4. Guardamos los productos en la memoria rápida para la próxima vez
+        sessionStorage.setItem('catalogoStarbucks', JSON.stringify(productos));
         
-        if (productos.length === 0) {
-            contenedor.innerHTML = '<p style="color: var(--cafe-oscuro);">No hay productos disponibles en este momento.</p>';
-            return;
-        }
-        
-        productos.forEach(prod => {
-            let imgUrl = 'fav-1.jpg'; 
-            if(prod.nombre.toLowerCase().includes('latte') || prod.nombre.toLowerCase().includes('jugo')) imgUrl = 'fav-3.jpg';
-            else if(prod.nombre.toLowerCase().includes('mocha') || prod.nombre.toLowerCase().includes('descafeinado')) imgUrl = 'fav-2.jpg';
-            
-            const tarjetaHTML = `
-                <div class="card" style="width: 30%; min-width: 250px; background-color: var(--blanco); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; margin-bottom: 20px; display: flex; flex-direction: column;">
-                    <img src="${imgUrl}" alt="${prod.nombre}" style="width: 100%; height: 250px; object-fit: cover;">
-                    <div class="card-info" style="padding: 20px; text-align: center; display: flex; flex-direction: column; flex-grow: 1;">
-                        <h3 style="color: var(--verde-sirena); margin-bottom: 10px;">${prod.nombre}</h3>
-                        <p style="color: #555; margin-bottom: 15px; font-size: 0.9rem; flex-grow: 1;">${prod.descripcion}</p>
-                        <span style="display: block; font-weight: bold; font-size: 1.3rem; color: var(--cafe-oscuro); margin-bottom: 15px;">S/ ${prod.precio.toFixed(2)}</span>
-                        <button onclick="agregarAlCarrito('${prod.nombre}', ${prod.precio})" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px;">Agregar al pedido</button>
-                    </div>
-                </div>
-            `;
-            contenedor.innerHTML += tarjetaHTML;
-        });
+        // 5. Dibujamos las tarjetas
+        renderizarTarjetas(productos, contenedor);
         
     } catch (error) {
         console.error("Error al cargar productos:", error);
-        contenedor.innerHTML = '<p style="color: red;">Error al conectar con la base de datos.</p>';
+        contenedor.innerHTML = '<p style="color: red; text-align: center; width: 100%;">Error al conectar con la base de datos. Por favor recarga la página.</p>';
     }
+}
+
+// ==========================================
+// FUNCIÓN AUXILIAR: DIBUJAR LAS TARJETAS HTML
+// ==========================================
+function renderizarTarjetas(productos, contenedor) {
+    contenedor.innerHTML = ''; 
+    
+    if (productos.length === 0) {
+        contenedor.innerHTML = '<p style="color: var(--cafe-oscuro); text-align: center; width: 100%;">No hay productos disponibles en este momento.</p>';
+        return;
+    }
+    
+    productos.forEach(prod => {
+        let imgUrl = 'fav-1.jpg'; 
+        if(prod.nombre.toLowerCase().includes('latte') || prod.nombre.toLowerCase().includes('jugo')) imgUrl = 'fav-3.jpg';
+        else if(prod.nombre.toLowerCase().includes('mocha') || prod.nombre.toLowerCase().includes('descafeinado')) imgUrl = 'fav-2.jpg';
+        
+        const tarjetaHTML = `
+            <div class="card" style="width: 30%; min-width: 250px; background-color: var(--blanco); border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s; margin-bottom: 20px; display: flex; flex-direction: column;">
+                <img src="${imgUrl}" alt="${prod.nombre}" style="width: 100%; height: 250px; object-fit: cover;">
+                <div class="card-info" style="padding: 20px; text-align: center; display: flex; flex-direction: column; flex-grow: 1;">
+                    <h3 style="color: var(--verde-sirena); margin-bottom: 10px;">${prod.nombre}</h3>
+                    <p style="color: #555; margin-bottom: 15px; font-size: 0.9rem; flex-grow: 1;">${prod.descripcion}</p>
+                    <span style="display: block; font-weight: bold; font-size: 1.3rem; color: var(--cafe-oscuro); margin-bottom: 15px;">S/ ${prod.precio.toFixed(2)}</span>
+                    <button onclick="agregarAlCarrito('${prod.nombre}', ${prod.precio})" class="btn-primary" style="width: 100%; border: none; cursor: pointer; padding: 12px; border-radius: 25px; transition: 0.3s;">Agregar al pedido</button>
+                </div>
+            </div>
+        `;
+        contenedor.innerHTML += tarjetaHTML;
+    });
 }
 
 // ==========================================
