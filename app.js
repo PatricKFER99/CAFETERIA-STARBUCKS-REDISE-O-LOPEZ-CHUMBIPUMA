@@ -10,7 +10,8 @@ async function cargarCatalogo() {
     const contenedor = document.getElementById('catalogo-container');
     if (!contenedor) return; 
 
-    const catalogoGuardado = sessionStorage.getItem('catalogoStarbucks15');
+    // Llave de caché renovada para evitar datos antiguos
+    const catalogoGuardado = sessionStorage.getItem('catalogoStarbucksV5');
     if (catalogoGuardado) {
         renderizarTarjetas(JSON.parse(catalogoGuardado), contenedor);
         return; 
@@ -25,15 +26,16 @@ async function cargarCatalogo() {
             </div>
         `;
 
-        // FILTRUM CRUCIAL: Solo traemos cafés (1), postres (2) y jugos (3), fuera las promos
+        // Traemos solo los 15 productos ordenados estrictamente por categoría
         const { data: productos, error } = await supabase
             .from('t_producto')
             .select('*')
-            .in('id_catalogo', [1, 2, 3]);
+            .in('id_catalogo', [1, 2, 3])
+            .order('id_catalogo', { ascending: true });
 
         if (error) throw error;
         
-        sessionStorage.setItem('catalogoStarbucks15', JSON.stringify(productos));
+        sessionStorage.setItem('catalogoStarbucksV5', JSON.stringify(productos));
         renderizarTarjetas(productos, contenedor);
         
     } catch (error) {
@@ -49,16 +51,14 @@ function renderizarTarjetas(productos, contenedor) {
         return;
     }
     
-    // Contadores independientes para mapear exactamente tus 15 archivos de imagen
     let idxCafe = 1;
     let idxPostre = 1;
     let idxJugo = 1;
 
     productos.forEach(prod => {
-        let imgUrl = 'americano-alto-cafe1.jpg'; // fallback seguro
+        let imgUrl = 'americano-alto-cafe1.jpg'; 
         const cat = prod.id_catalogo; 
 
-        // Mapeo milimétrico con tus nombres de archivo reales
         if (cat === 1) {
             const mapCafes = {
                 1: 'americano-alto-cafe1.jpg',
@@ -342,7 +342,6 @@ window.finalizarPedido = async function(metodoPago) {
         let idDiaCalculado = fechaHoy.getDay(); 
         if (idDiaCalculado === 0) idDiaCalculado = 7; 
 
-        // Inserción en t_ventas
         const { data: ventaNueva, error: errorVenta } = await supabase
             .from('t_ventas')
             .insert([{ 
