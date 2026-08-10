@@ -11,13 +11,9 @@
 
     <!-- HEADER UNIFICADO MAESTRO -->
     <header class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background-color: var(--verde-sirena, #006241); position: fixed; top: 0; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); box-sizing: border-box;">
-        
-        <!-- LOGO -->
         <div class="logo-container" style="display: flex; align-items: center;">
             <img src="logo.png" alt="Starbucks Logo" class="logo" style="height: 45px;">
         </div>
-
-        <!-- NAVEGACIÓN CENTRAL -->
         <nav style="flex-grow: 1; text-align: center;">
             <ul class="nav-links" style="display: inline-flex; gap: 35px; list-style: none; margin: 0; padding: 0;">
                 <li><a href="index.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem; border-bottom: 2px solid #d4e9e2; padding-bottom: 3px;">Inicio</a></li>
@@ -26,28 +22,21 @@
                 <li><a href="contacto.html" style="color: white; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1rem;">Contacto</a></li>
             </ul>
         </nav>
-
-        <!-- CONTENEDOR DINÁMICO DE USUARIO (Gestionado automáticamente por app.js) -->
         <div id="menu-usuario" style="display: flex; align-items: center; gap: 15px;">
-            <!-- Estado por defecto -->
             <button onclick="document.getElementById('modal-registro').style.display='flex'" style="background: transparent; border: 1px solid white; color: white; padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: 0.3s;">Registrarse</button>
             <button onclick="document.getElementById('modal-login').style.display='flex'" style="background: white; border: none; color: var(--verde-sirena, #006241); padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: 0.3s;">Iniciar Sesión</button>
         </div>
     </header>
 
-    <main style="padding-top: 80px;">
-        <!-- HEROE O INICIO (MANTENIDO DE TU CÓDIGO) -->
-        <section class="hero" style="background-color: var(--cafe-oscuro, #2c1d11); color: white; text-align: center; padding: 60px 5%;">
-            <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
-                <h1 style="font-family: 'Montserrat', sans-serif; font-size: 3.5rem; margin-bottom: 20px; color: #d4e9e2;">El arte del café,<br>ahora a un clic.</h1>
-                <p style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 30px; color: #e5e5e5;">Descubre nuestra nueva experiencia digital. Más rápida, más intuitiva, más tuya.</p>
-                <a href="catalogo.html" class="btn-secondary" style="display: inline-block; background-color: var(--verde-sirena, #006241); color: white; padding: 15px 35px; border-radius: 30px; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif; font-size: 1.1rem; border: 2px solid var(--verde-sirena, #006241);">Ver Menú Completo</a>
+    <main>
+        <!-- HEROE O INICIO (LIMPIO PARA QUE MUESTRE LA FOTO) -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>El arte del café,<br>ahora a un clic.</h1>
+                <p>Descubre nuestra nueva experiencia digital. Más rápida, más intuitiva, más tuya.</p>
+                <a href="catalogo.html" class="btn-secondary">Ver Menú Completo</a>
             </div>
         </section>
-
-        <!-- ========================================== -->
-        <!-- NUEVAS SECCIONES PERSUASIVAS (REEMPLAZO)   -->
-        <!-- ========================================== -->
 
         <!-- SECCIÓN 1: CONO ESTE -->
         <section style="display: flex; flex-wrap: wrap; align-items: center; max-width: 1200px; margin: 60px auto; padding: 0 5%; gap: 40px;">
@@ -73,33 +62,25 @@
             </div>
         </section>
 
-        <!-- ========================================== -->
-        <!-- FIN NUEVAS SECCIONES                       -->
-        <!-- ========================================== -->
-
-        <!-- BANNER: STARBUCKS APLICACION (MANTENIDO DE TU CÓDIGO) -->
-        <section class="rewards-banner" style="background-color: var(--verde-sirena); color: white; padding: 60px 10%; display: flex; align-items: center; justify-content: space-between;">
-            <div style="max-width: 60%;">
+        <!-- BANNER: STARBUCKS APLICACION -->
+        <section class="rewards-banner" style="background-color: var(--verde-sirena, #006241); color: white; padding: 60px 10%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 30px;">
+            <div style="flex: 1; min-width: 300px;">
                 <h2 style="font-size: 2.5rem; margin-bottom: 15px; color: var(--verde-menta, #d4e9e2);">Únete a Starbucks Rewards</h2>
                 <p style="font-size: 1.2rem; line-height: 1.5; margin-bottom: 20px;">Gana Estrellas en cada compra, obtén bebidas gratis y disfruta de beneficios exclusivos. La fidelidad tiene un sabor increíble.</p>
-                <a href="#" onclick="document.getElementById('modal-registro').style.display='flex'" class="btn-secondary" style="background-color: var(--verde-menta, #d4e9e2); color: var(--verde-sirena, #006241); border: none; padding: 10px 20px; border-radius: 20px; text-decoration: none; font-weight: bold;">Registrarse Gratis</a>
+                <a href="#" onclick="document.getElementById('modal-registro').style.display='flex'" style="display: inline-block; background-color: var(--verde-menta, #d4e9e2); color: var(--verde-sirena, #006241); border: none; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; font-family: 'Montserrat', sans-serif;">Registrarse Gratis</a>
             </div>
-            <div style="width: 35%;">
-                <img src="app-rewards.png" alt="Starbucks App" style="width: 100%; max-width: 300px; transform: rotate(-5deg);">
+            <div style="flex: 1; min-width: 250px; text-align: center;">
+                <img src="app-rewards.png" alt="Starbucks App" style="width: 100%; max-width: 250px; transform: rotate(-5deg);">
             </div>
         </section>
     </main>
 
-    <!-- PIE DE PÁGINA (MANTENIDO DE TU CÓDIGO) -->
+    <!-- PIE DE PÁGINA -->
     <footer style="background-color: var(--cafe-oscuro, #2c1d11); color: white; text-align: center; padding: 25px;">
-        <p style="margin: 0;">&copy; 2026 Starbucks Coffee Company. Rediseño Académico-Hecho por Patrick Fernando Lopez Meza & Luis Chumbipuma.</p>
+        <p style="margin: 0;">&copy; 2026 Starbucks Coffee Company. Rediseño Académico - Hecho por Patrick Fernando Lopez Meza & Luis Chumbipuma.</p>
     </footer>
 
-    <!-- ==========================================
-         MODALES DE AUTENTICACIÓN Y CARRITO (MANTENIDOS INTACTOS)
-         ========================================== -->
-         
-    <!-- MODAL DE REGISTRO -->
+    <!-- MODALES Y CARRITO (MANTENIDOS INTACTOS Y OCULTOS POR DEFECTO) -->
     <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
             <h2 style="color: var(--verde-sirena); margin-bottom: 25px; text-align: center;">Crear Cuenta</h2>
@@ -123,7 +104,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE LOGIN -->
     <div id="modal-login" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
         <div style="background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
             <h2 style="color: var(--verde-sirena); margin-bottom: 25px; text-align: center;">Iniciar Sesión</h2>
@@ -137,7 +117,6 @@
         </div>
     </div>
 
-    <!-- PANEL LATERAL DEL CARRITO -->
     <div id="overlay-carrito" onclick="cerrarCarrito()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(0,0,0,0.5); z-index: 1999; backdrop-filter: blur(2px);"></div>
     
     <div id="panel-carrito" style="display: none; position: fixed; top: 0; right: -400px; width: 100%; max-width: 400px; height: 100vh; background: white; box-shadow: -5px 0 25px rgba(0,0,0,0.2); z-index: 2000; flex-direction: column; transition: right 0.3s ease;">
@@ -157,7 +136,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE PAGO Y ENVÍO -->
     <div id="modal-pago" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2001; justify-content: center; align-items: center;">
         <div style="background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
             <h2 style="color: var(--verde-sirena); margin-bottom: 20px; text-align: center;">Completa tu Envío y Pago</h2>
@@ -189,16 +167,5 @@
     <!-- CONEXIÓN A SUPABASE Y LÓGICA DEL SISTEMA -->
     <script type="module" src="app.js"></script>
     
-    <!-- SCRIPT SENCILLO PARA ABRIR LOS MODALES DESDE LA CABECERA -->
-    <script>
-        document.getElementById('btn-abrir-registro')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('modal-registro').style.display = 'flex';
-        });
-        document.getElementById('btn-abrir-login')?.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.getElementById('modal-login').style.display = 'flex';
-        });
-    </script>
 </body>
 </html>

@@ -180,3 +180,58 @@ input:focus, select:focus, textarea:focus {
         flex-direction: column !important;
     }
 }
+/* ==========================================================================
+   6. ESTILOS DEL BANNER PRINCIPAL (HERO) RESTAURADOS
+   ========================================================================== */
+.hero {
+    height: 85vh; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('hero-cafe.jpg');
+    background-size: cover; 
+    background-position: center top; 
+    display: flex;
+    align-items: center;
+    padding: 0 10%;
+    margin-top: 75px; /* Evita que el header tape la imagen */
+}
+
+.hero-content {
+    text-align: left;
+}
+
+.hero-content h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: var(--verde-menta);
+    line-height: 1.1;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 500px;
+    line-height: 1.6;
+    color: var(--blanco);
+    margin-bottom: 30px;
+}
+
+.btn-secondary {
+    display: inline-block;
+    background-color: transparent;
+    color: var(--blanco);
+    padding: 15px 30px;
+    border: 2px solid var(--blanco);
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--blanco);
+    color: var(--cafe-oscuro);
+}
+
+/* Ajuste para celulares */
+@media (max-width: 768px) {
+    .hero-content h1 { font-size: 2.5rem; }
+    .hero { height: 65vh; }
+}
