@@ -1,13 +1,21 @@
-/* --- VARIABLES DE COLOR  --- */
+/* ==========================================================================
+   1. ELEMENTOS BÁSICOS Y TÉCNICA (Teoría del color y Tipografía)
+   ========================================================================== */
 :root {
-    --verde-sirena: #006241;   /* Color principal - Frío */
-    --verde-menta: #d4e9e2;    /* Color secundario - Frío */
-    --cafe-oscuro: #1e1e1e;    /* Fondo premium - Neutro/Oscuro */
+    /* Paleta de Colores Oficial */
+    --verde-sirena: #006241;
+    --verde-menta: #d4e9e2;
+    --cafe-oscuro: #2c1d11;
+    --crema: #f9f6f0;
     --blanco: #ffffff;
-    --crema: #f9f9f9;          /* Color cálido para contraste */
+    --gris-texto: #555555;
+    
+    /* Variables de tipografía */
+    --fuente-titulos: 'Montserrat', sans-serif;
+    --fuente-textos: 'Open Sans', sans-serif;
 }
 
-/* --- ESTILOS GENERALES --- */
+/* Reset básico para adaptabilidad espacial */
 * {
     margin: 0;
     padding: 0;
@@ -15,159 +23,84 @@
 }
 
 body {
-    font-family: 'Open Sans', sans-serif;
-    background-color: var(--crema); /* Aclaramos un poco el fondo base para que parezca app moderna */
-    color: var(--cafe-oscuro);
-}
-
-h1, h2, h3 {
-    font-family: 'Montserrat', sans-serif;
-}
-
-/* --- BARRA DE NAVEGACIÓN  --- */
-.navbar {
-    background-color: var(--verde-sirena); /* ¡El verde oficial de Starbucks! */
-    position: sticky; 
-    top: 0;
-    width: 100%;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* Sombra un poco más oscura */
-}
-
-.logo {
-    height: 50px;
-}
-
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-}
-
-/* Enlaces del menú en color blanco */
-.nav-links a {
-    color: var(--blanco); 
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s;
-}
-
-/* Al pasar el mouse, se pintan de verde menta (clarito) */
-.nav-links a:hover {
-    color: var(--verde-menta);
-}
-
-.logo {
-    height: 50px;
-}
-
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 30px;
-}
-
-.nav-links a {
-    color: var(--cafe-oscuro);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s;
-}
-
-.nav-links a:hover {
-    color: var(--verde-sirena);
-}
-
-/* BOTONES */
-.btn-primary {
-    background-color: var(--verde-sirena);
-    color: var(--blanco);
-    padding: 10px 25px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s;
-}
-
-.btn-primary:hover {
-    background-color: var(--verde-menta);
-    color: var(--verde-sirena);
-}
-
-.btn-secondary {
-    display: inline-block;
-    background-color: transparent;
-    color: var(--blanco);
-    padding: 15px 30px;
-    border: 2px solid var(--blanco);
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    margin-top: 20px;
-    transition: 0.3s;
-}
-
-.btn-secondary:hover {
-    background-color: var(--blanco);
-    color: var(--cafe-oscuro);
-}
-
-/* --- SECCIÓN PRINCIPAL  --- */
-.hero {
-    height: 85vh; 
-    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.7)), url('hero-cafe.jpg');
-    background-size: cover; 
-    background-position: center top; 
-    display: flex;
-    align-items: center;
-    padding: 0 10%;
-    /* Se eliminó el margin-top problemático */
-}
-
-.hero-content h1 {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    color: var(--verde-menta);
-}
-
-.hero-content p {
-    font-size: 1.2rem;
-    max-width: 500px;
-    line-height: 1.6;
-    color: var(--blanco);
-}
-
-/* --- SECCIÓN PROMOCIONES / CATÁLOGO --- */
-.promociones, .bestsellers {
-    padding: 80px 10%;
+    font-family: var(--fuente-textos);
     background-color: var(--crema);
     color: var(--cafe-oscuro);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.section-title {
-    text-align: center;
-    font-size: 2.5rem;
+/* ==========================================================================
+   2. JERARQUÍA VISUAL Y ESTÉTICA (Tipografía y Navegación)
+   ========================================================================== */
+h1, h2, h3, h4 {
+    font-family: var(--fuente-titulos);
     color: var(--verde-sirena);
-    margin-bottom: 50px;
 }
 
-.cards-container {
+/* Barra de navegación (Equilibrio y Alineación) */
+.navbar {
     display: flex;
     justify-content: space-between;
-    gap: 30px;
+    align-items: center;
+    padding: 15px 5%;
+    background-color: var(--verde-sirena);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
+.nav-links {
+    display: inline-flex;
+    gap: 35px;
+    list-style: none;
+}
+
+.nav-links a {
+    color: var(--blanco);
+    text-decoration: none;
+    font-weight: bold;
+    font-family: var(--fuente-titulos);
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--verde-menta);
+}
+
+/* ==========================================================================
+   3. PRINCIPIOS FUNDAMENTALES (Repetición, Espacio en Blanco y Contraste)
+   ========================================================================== */
+/* Contenedor de Tarjetas (Catálogo y Promociones) */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    padding: 20px 5%;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* Diseño de Tarjetas de Producto (Forma y Proporción) */
 .card {
     background-color: var(--blanco);
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-    width: 30%;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .card:hover {
-    transform: translateY(-10px); 
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
 .card img {
@@ -179,41 +112,71 @@ h1, h2, h3 {
 .card-info {
     padding: 20px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
-.card-info h3 {
-    color: var(--verde-sirena);
-    margin-bottom: 10px;
-}
-
-/* --- PIE DE PÁGINA --- */
-footer {
-    text-align: center;
-    padding: 30px;
+/* ==========================================================================
+   4. PERSUASIÓN Y FUNCIONALIDAD (Llamados a la Acción)
+   ========================================================================== */
+.btn-primary {
     background-color: var(--verde-sirena);
-    color: var(--verde-menta);
-}
-
-/* --- ESTILOS PARA TIENDAS Y BOTÓN DE MAPS --- */
-.tiendas {
-    background-color: var(--cafe-oscuro);
-    padding: 80px 10%;
-}
-.tiendas .section-title {
-    color: var(--verde-menta);
-}
-.btn-maps {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 15px;
-    background-color: #f9f9f9;
-    color: #1e1e1e;
-    text-decoration: none;
-    border-radius: 5px;
+    color: var(--blanco);
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
     font-weight: bold;
-    font-size: 0.9rem;
+    font-family: var(--fuente-titulos);
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
 }
-.btn-maps:hover {
-    background-color: var(--verde-sirena);
-    color: white;
+
+.btn-primary:hover {
+    background-color: #004d33;
+    transform: scale(1.02);
+}
+
+/* Inputs y Formularios (Funcionalidad útil) */
+input, select, textarea {
+    font-family: var(--fuente-textos);
+    font-size: 1rem;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--verde-sirena) !important;
+    box-shadow: 0 0 5px rgba(0, 98, 65, 0.3);
+}
+
+/* ==========================================================================
+   5. ADAPTABILIDAD (Responsive Design para múltiples formatos)
+   ========================================================================== */
+@media (max-width: 992px) {
+    .card {
+        width: 45% !important; /* Dos columnas en tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+    }
+    
+    .nav-links {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .card {
+        width: 100% !important; /* Una columna en celulares */
+    }
+    
+    section {
+        flex-direction: column !important;
+    }
 }
